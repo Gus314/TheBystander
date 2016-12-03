@@ -1,11 +1,13 @@
 package bystander.graphs;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import bystander.exceptions.InvalidPathException;
 import bystander.graphs.interfaces.IArea;
+import bystander.graphs.interfaces.ICycle;
 import bystander.graphs.interfaces.IEdge;
 import bystander.graphs.interfaces.IFace;
 import bystander.graphs.interfaces.IGrid;
@@ -104,21 +106,21 @@ public class Grid implements IGrid
     	return edgesWithVertex(vertex).size() < 8;
     }
          
-    private IPath completeAreaPath(IPath subPath, IPath masterPath) throws InvalidPathException
+    private ICycle completeAreaPath(IPath subPath, IPath masterPath) throws InvalidPathException
     {
-    	IPath result = subPath;
+    	ICycle result = new Cycle(subPath);
     	// Take in a path and sub-path, then move along the boundary in the direction not taken by the larger path to
     	// determine the area spanned by the sub-path.
     	// TODO: Add conditions to check as it sounds like a lot could go wrong here.
-    	IVertex finalSharedVertex = subPath.getVertices().get(subPath.getVertices().size()-1);
+    	IVertex finalSharedVertex = result.getVertices().get(result.getVertices().size()-1);
     	IEdge latestEdge = null;
     	for(IEdge e: edgesWithVertex(finalSharedVertex))
     	{
     		if(isOnBoundary(e.getSource()) && isOnBoundary(e.getTarget()) && (!masterPath.getEdges().contains(e)))
     		{   // Find other edge moving along the boundary but not in masterPath.
-    			if(subPath.getVertices().contains(e.getSource())) // Check direction of path
+    			if(result.getVertices().contains(e.getSource())) // Check direction of path
     			{
-    				subPath.addEdge(e);
+    				result.addEdge(e);
     				latestEdge = e;
     				break;    				
     			}
@@ -128,14 +130,14 @@ public class Grid implements IGrid
     	IVertex currentVertex = latestEdge.getTarget();
     	
     	// Keep adding edges on the boundary until a vertex in the master path is reached.
-    	while(!masterPath.getVertices().contains(currentVertex));
+    	while(!masterPath.getVertices().contains(currentVertex))
     	{
     		// Find next edge to use.
     		for(IEdge edge: edgesWithVertex(currentVertex))
     		{	// TODO: Create functions edgesWithSourceVertex and edgesWithTargetVertex.
     			if(edge.getSource() == currentVertex)
     			{
-    				if(isOnBoundary(edge.getTarget()) && !subPath.getVertices().contains(edge.getTarget()))
+    				if(isOnBoundary(edge.getTarget()) && !result.getVertices().contains(edge.getTarget()))
     				{
     					latestEdge = edge;
     					result.addEdge(latestEdge);
@@ -166,22 +168,66 @@ public class Grid implements IGrid
     {
     	// TODO: Check path is complete.
     	IArea result = new Area();
+    	Collection<IVertex> areaVertices = new ArrayList<IVertex>();
+    	areaVertices.addAll(path.getVertices());
     	// A face is contained in an area if it contains boundary vertices all of which are 
-    	// in the path or if of its bottom-left corner is in the path? (Logic needs checked. Also, what about non-rectangular puzzles?)
+    	// in the path or if of it at least 3 of its vertices are in the area (Logic needs checked. Also, what about non-rectangular puzzles?)
     	for(IFace face: faces)
-    	{
+    	{  // Add boundary faces.
     		Collection<IVertex> boundaryVertices = getBoundaryVertices(face);
-    		boolean boundariesInPath = path.getVertices().containsAll(boundaryVertices);
-    		boolean bottomLeftInPath = path.getVertices().contains(face.getBottomLeftVertex());
+    		boolean boundariesInPath = (boundaryVertices.size() > 0) && (path.getVertices().containsAll(boundaryVertices));
     		
-    		if(boundariesInPath || bottomLeftInPath)
+    		if(boundariesInPath)
     		{
     			result.addFace(face);
+    			areaVertices.addAll(face.getVertices());
     			continue;
+    		} 		
+    	}
+    	
+    	boolean change = true;
+    	while(change)
+    	{
+    		change = addEnclosedFaces(areaVertices, result);
+    	}
+    	   	    	    	
+    	return result;
+    }
+    
+    private boolean addEnclosedFaces(Collection<IVertex> areaVertices, IArea area)
+    {
+    	// If an area contains all but one of the vertices of a face, it must contain that face. (TODO: Does this work for non-rectangular grids?)
+    	boolean change = false;
+    	
+    	for(IFace face: faces)
+    	{
+    		if(area.getFaces().contains(face))
+    		{
+    			continue; // Ignore faces already considered.
+    		}
+    		
+    		int verticesInArea = 0;
+    		for(IVertex v: face.getVertices())
+    		{
+    			if(areaVertices.contains(v))
+    			{
+    				verticesInArea++;
+    			}
+    		}
+    		if(verticesInArea >= face.getVertices().size()-1) 
+    		{
+    			area.addFace(face);
+    			change = true;
+    			for(IVertex v: face.getVertices())
+    			{
+    				if(!areaVertices.contains(v))
+    				{
+    					areaVertices.add(v);
+    				}
+    			}
     		}
     	}
-    	    	
-    	return result;
+    	return change;
     }
     
     public Collection<IArea> determineAreas(IPath path) throws InvalidPathException
@@ -215,11 +261,15 @@ public class Grid implements IGrid
     				{
     					// Path has just touched boundary, creating a new area.
     					IPath pathToNewArea = path.subPath(areaStart, v);
-    					IPath completeAreaPath = completeAreaPath(pathToNewArea, path);
+    					ICycle completeAreaPath = completeAreaPath(pathToNewArea, path);
     					areas.add(areaSpannedByCompletePath(completeAreaPath));
     					areaStart = v;
     				}
     				previousTouchedBoundary = true;
+    			}
+    			else
+    			{
+    				previousTouchedBoundary = false;
     			}
     		}
     		last = v;

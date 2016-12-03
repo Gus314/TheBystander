@@ -42,4 +42,9 @@ public class Vertex implements IVertex
         this.column = column;
         this.startOrExit = startOrExit;
     }
+    
+    public String toString()
+    {
+    	return "(" + row + "," + column + ")";
+    }
 }

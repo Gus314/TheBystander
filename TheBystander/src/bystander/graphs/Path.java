@@ -1,7 +1,6 @@
 package bystander.graphs;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import bystander.enums.StartOrExit;
@@ -15,7 +14,7 @@ public class Path implements IPath
     private List<IEdge> edges = new ArrayList<IEdge>();
     private List<IVertex> vertices = new ArrayList<IVertex>();
         
-    public Collection<IEdge> getEdges() {
+    public List<IEdge> getEdges() {
 		return edges;
 	}
 
@@ -49,6 +48,11 @@ public class Path implements IPath
 
     public boolean canAddEdge(IEdge edge)
     {
+        if(vertices.contains(edge.getTarget()))
+        {
+            return false;
+        }
+        
         if (edges.size() == 0)
         {
             return (edge.getSource().getStartOrExit() == StartOrExit.START);
@@ -64,29 +68,26 @@ public class Path implements IPath
             return false;
         }
 
-        if(vertices.contains(edge.getTarget()))
-        {
-            return false;
-        }
-
         return true;
     }
 
     public void addEdge(IEdge edge) throws InvalidPathException
     {
         if(vertices.contains(edge.getTarget()))
-        {
+        { 
             throw new InvalidPathException("Path cannot visit the same vertex twice.");
         }
 
         if(edges.size() == 0)
         {
-            if(edge.getSource().getStartOrExit() != StartOrExit.START)
-            {
+            /*if(edge.getSource().getStartOrExit() != StartOrExit.START)
+            {   // This is true when constructing the master path but not when checking areas.
+            // TODO: Tidy this.
                 throw new InvalidPathException("Path can only begin at start vertex.");
             }
-            else
+            else*/
             {
+            	vertices.add(edge.getSource()); // Starting vertex.
                 vertices.add(edge.getTarget());
                 edges.add(edge);
                 return;
@@ -134,5 +135,17 @@ public class Path implements IPath
     		}    		
     	}
     	return result;
+    }
+    
+    public String toString()
+    {
+    	String result = "<Path>";
+    	
+    	for(IEdge e: getEdges())
+    	{
+    		result += e.getSource() + "->";
+    	}
+    	result += getEdges().get(getEdges().size()-1).getTarget();
+    	return result + "</Path>";
     }
 }

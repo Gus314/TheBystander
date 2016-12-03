@@ -23,6 +23,7 @@ public class Controller
         System.out.println("completePaths.size() == " + completePaths.size());
         for(IPath p: completePaths)
         {
+        	System.out.println(p);
             Collection<IArea> areas = new ArrayList<IArea>();
         	try 
         	{

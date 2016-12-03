@@ -30,6 +30,7 @@ public class Face implements IFace
 	
 	public IVertex getBottomLeftVertex()
 	{
+		// TODO: Remove this?
 		IVertex result = null;
 		
 		for(IVertex v: vertices)
