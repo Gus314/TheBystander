@@ -1,7 +1,12 @@
 package bystander.graphs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import bystander.enums.StartOrExit;
+import bystander.exceptions.InvalidVertexException;
 import bystander.graphs.interfaces.IEdge;
+import bystander.graphs.interfaces.IFace;
 import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IGridFactory;
 import bystander.graphs.interfaces.IVertex;
@@ -38,7 +43,43 @@ public class GridFactory implements IGridFactory
                 }
             }
         }
-
+        
+        Collection<IFace> faces = determineFaces(vertices);
+    
+        for(IFace face: faces)
+        {
+        	result.addFace(face);
+        }
+        
         return result;
     }
+    
+	private Collection<IFace> determineFaces(IVertex[][] vertices)
+	{
+		Collection<IFace> faces = new ArrayList<IFace>();
+		
+		// Rearrange the faces on the graph as vertices and edges are added. A face is a minimal cycle
+		// and they cannot overlap.
+		// TODO: Generalize to non-rectangular graphs.
+		for(int i = 0; i < 8 - 1; ++i)
+		{
+			for(int j = 0; j < 8 - 1; ++j)
+			{
+				try
+				{			
+					IFace face = new Face();
+					face.addVertex(vertices[i][j]);
+					face.addVertex(vertices[i+1][j]);
+					face.addVertex(vertices[i][j+1]);
+					face.addVertex(vertices[i+1][j+1]);
+					faces.add(face);
+				}
+				catch(InvalidVertexException invex)
+				{
+					System.out.println(invex.getMessage());
+				}
+			}
+		}
+		return faces;
+	}
 }

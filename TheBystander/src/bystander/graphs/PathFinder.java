@@ -1,5 +1,7 @@
 package bystander.graphs;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import bystander.enums.StartOrExit;
@@ -14,31 +16,26 @@ public class PathFinder implements IPathFinder
 {
 	private boolean kill;
 	
-    private String tryPath(IVertex currentVertex, IGrid grid, IPath p)
+    private void tryPath(IVertex currentVertex, IGrid grid, IPath p, Collection<IPath> results)
     {
     	if(kill)
     	{
-    		return "";
+    		return;
     	}
     	
-        String result = "";
         IVertex nextVertex = currentVertex;
 
         List<IEdge> currentEdges = grid.edgesWithVertex(nextVertex, p);
         if(currentEdges.size() == 0)
         {   // Reached a dead end.
-            return result;
+            return;
         }
 
         if(p.isComplete())
         {
             kill = true;
-            result = "";
-            for(int i = 0; i < p.getVertices().size(); ++i)
-            {
-            	result = result + "(" + p.getVertices().get(i).getRow() + ","  +p.getVertices().get(i).getColumn() + ")";
-            }
-            return result;
+            results.add(p);
+            return;
         }
 
         for(int i = 0; i < currentEdges.size(); ++i)
@@ -60,18 +57,19 @@ public class PathFinder implements IPathFinder
                 
             	if(kill)
             	{
-            		return result;
+            		return;
             	}
-                result = result + tryPath(nextVertex, grid, newPath);
+                tryPath(nextVertex, grid, newPath, results);
             }
         }
 
-        return result;
+        return;
     }
 
-    public String findPath(IGrid grid)
+    public Collection<IPath> findPaths(IGrid grid)
     {
         IVertex currentVertex = null;
+        // TODO: Modify this for multiple start vertices.
         for(IVertex[] vArray: grid.getVertices())
         {
             for(IVertex v : vArray)
@@ -85,9 +83,8 @@ public class PathFinder implements IPathFinder
 
         IPath attempt = new Path();
         kill = false;
-        String result = tryPath(currentVertex, grid, attempt);
-        System.out.println("Path found: ");
-        System.out.println(result);
-        return result;
+        Collection<IPath> completePaths = new ArrayList<IPath>();
+        tryPath(currentVertex, grid, attempt, completePaths);
+        return completePaths;
     }
 }

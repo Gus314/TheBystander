@@ -1,6 +1,8 @@
 package bystander.graphs.interfaces;
 
+import java.util.Collection;
+
 public interface IPathFinder
 {
-    String findPath(IGrid grid);
+    Collection<IPath> findPaths(IGrid grid);
 }

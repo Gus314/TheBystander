@@ -14,7 +14,7 @@ public class Path implements IPath
 {
     private List<IEdge> edges = new ArrayList<IEdge>();
     private List<IVertex> vertices = new ArrayList<IVertex>();
-    
+        
     public Collection<IEdge> getEdges() {
 		return edges;
 	}
@@ -108,5 +108,31 @@ public class Path implements IPath
         {
             throw new InvalidPathException("Cannot add edge to path, source and target do not match.");
         }
+    }
+    
+    public IPath subPath(IVertex start, IVertex end) throws InvalidPathException // Return the subpath from start to end. May return the empty path.
+    {
+    	IPath result = new Path();
+    	boolean foundStart = false;
+    	
+    	for(IEdge e: this.getEdges())
+    	{
+    		if((!foundStart) && (start == e.getSource()))
+    		{
+    			foundStart = true;
+    			result.addEdge(e);
+
+    		}
+    		else if(foundStart)
+    		{
+    			result.addEdge(e);
+    			if(e.getTarget() == end)
+    			{
+    				// Sub-path complete.
+    				break;
+    			}
+    		}    		
+    	}
+    	return result;
     }
 }

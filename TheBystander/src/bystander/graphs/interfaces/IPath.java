@@ -12,4 +12,5 @@ public interface IPath
     void addEdge(IEdge edge) throws InvalidPathException;
     Collection<IEdge> getEdges();
     List<IVertex> getVertices();
+    IPath subPath(IVertex start, IVertex end) throws InvalidPathException; // Return the subpath from start to end. May return the empty path.
 }
