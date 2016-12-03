@@ -23,8 +23,10 @@ public class Controller
         IPathFinder pathFinder = new PathFinder();
         Collection<IPath> completePaths = pathFinder.findPaths(grid);
         System.out.println("completePaths.size() == " + completePaths.size());
+        int i = 0;
         for(IPath p: completePaths)
         {
+        	i++;
         	/*System.out.println(p);*/
             Collection<IArea> areas = new ArrayList<IArea>();
         	try 
@@ -32,7 +34,11 @@ public class Controller
 				areas.addAll(grid.determineAreas(p));
 				IRuleChecker ruleChecker = new RuleChecker();	
 				boolean isSolution = ruleChecker.isSolution(areas, p);
-				System.out.println(isSolution ? "Solved." : "Failed.");
+				System.out.println(isSolution ? "Solved." : "Failed Attempt " + i);
+				if(isSolution)
+				{
+					break;
+				}
 				/*for(IArea area: areas)
 				{
 					System.out.println(area);;	

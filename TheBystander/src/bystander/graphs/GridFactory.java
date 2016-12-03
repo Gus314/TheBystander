@@ -72,11 +72,11 @@ public class GridFactory implements IGridFactory
 				{			
 					IFace face = new Face();
 					// TODO: Produce a far better way of putting in special faces.
-					if(i == 1 && j == 1)
+					if(i == 6 && j == 1)
 					{
 						face = new ColouredFace(Colour.BLACK);
 					}
-					if(i == 2 && j == 1)
+					if(i == 6 && j == 6)
 					{
 						face = new ColouredFace(Colour.WHITE);
 					}

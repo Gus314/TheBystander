@@ -18,6 +18,12 @@ public class PathFinder implements IPathFinder
 	
     private void tryPath(IVertex currentVertex, IGrid grid, IPath p, Collection<IPath> results)
     {
+    	if(results.size() == 100000)
+    	{
+    		// TODO: Temporary restriction.
+    		kill = true;
+    	}
+    	
     	if(kill)
     	{
     		return;
@@ -33,7 +39,6 @@ public class PathFinder implements IPathFinder
 
         if(p.isComplete())
         {
-            kill = true;
             results.add(p);
             return;
         }

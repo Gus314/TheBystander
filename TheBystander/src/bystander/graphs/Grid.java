@@ -144,6 +144,11 @@ public class Grid implements IGrid
     				}
     			}
     		}
+    		if(currentVertex == latestEdge.getTarget())
+    		{ // TODO: Massive hack!
+    			return result;
+    		}
+    		
     		currentVertex = latestEdge.getTarget();
     	}    	
 
