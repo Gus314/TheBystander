@@ -6,11 +6,13 @@ import java.util.Collection;
 import bystander.exceptions.InvalidPathException;
 import bystander.graphs.GridFactory;
 import bystander.graphs.PathFinder;
+import bystander.graphs.RuleChecker;
 import bystander.graphs.interfaces.IArea;
 import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IGridFactory;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IPathFinder;
+import bystander.graphs.interfaces.IRuleChecker;
 
 public class Controller
 {
@@ -23,15 +25,18 @@ public class Controller
         System.out.println("completePaths.size() == " + completePaths.size());
         for(IPath p: completePaths)
         {
-        	System.out.println(p);
+        	/*System.out.println(p);*/
             Collection<IArea> areas = new ArrayList<IArea>();
         	try 
         	{
 				areas.addAll(grid.determineAreas(p));
-				for(IArea area: areas)
+				IRuleChecker ruleChecker = new RuleChecker();	
+				boolean isSolution = ruleChecker.isSolution(areas, p);
+				System.out.println(isSolution ? "Solved." : "Failed.");
+				/*for(IArea area: areas)
 				{
 					System.out.println(area);;	
-				}
+				}*/
 			} 
         	catch (InvalidPathException e) 
         	{

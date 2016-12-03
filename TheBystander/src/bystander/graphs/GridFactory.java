@@ -3,10 +3,13 @@ package bystander.graphs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bystander.enums.Colour;
 import bystander.enums.StartOrExit;
 import bystander.exceptions.InvalidVertexException;
+import bystander.graphs.faces.ColouredFace;
+import bystander.graphs.faces.Face;
+import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IEdge;
-import bystander.graphs.interfaces.IFace;
 import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IGridFactory;
 import bystander.graphs.interfaces.IVertex;
@@ -68,6 +71,15 @@ public class GridFactory implements IGridFactory
 				try
 				{			
 					IFace face = new Face();
+					// TODO: Produce a far better way of putting in special faces.
+					if(i == 1 && j == 1)
+					{
+						face = new ColouredFace(Colour.BLACK);
+					}
+					if(i == 2 && j == 1)
+					{
+						face = new ColouredFace(Colour.WHITE);
+					}
 					face.addVertex(vertices[i][j]);
 					face.addVertex(vertices[i+1][j]);
 					face.addVertex(vertices[i][j+1]);

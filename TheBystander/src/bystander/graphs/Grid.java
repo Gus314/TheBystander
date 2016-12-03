@@ -1,15 +1,14 @@
 package bystander.graphs;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import bystander.exceptions.InvalidPathException;
+import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IArea;
 import bystander.graphs.interfaces.ICycle;
 import bystander.graphs.interfaces.IEdge;
-import bystander.graphs.interfaces.IFace;
 import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IVertex;

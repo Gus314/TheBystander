@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import bystander.exceptions.InvalidPathException;
+import bystander.graphs.faces.interfaces.IFace;
 
 public interface IGrid
 {

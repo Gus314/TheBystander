@@ -3,8 +3,8 @@ package bystander.graphs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IArea;
-import bystander.graphs.interfaces.IFace;
 
 public class Area implements IArea
 {
