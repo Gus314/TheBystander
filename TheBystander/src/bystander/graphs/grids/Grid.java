@@ -95,9 +95,9 @@ public class Grid implements IGrid
     public boolean isOnBoundary(IVertex vertex)
     {
     	// This only works for rectangular puzzles.
-    	int edgesAwayFromBoundary = ((IFace[])faces.toArray())[0].getVertices().size() * 2;
+    	int edgesAwayFromBoundary = 8;  // TODO: Find a better way of expressing this.
     	return edgesWithVertex(vertex).size() < edgesAwayFromBoundary;
-    }
+    } 
          
     private ICycle completeAreaPath(IPath subPath, IPath masterPath) throws InvalidPathException
     {
@@ -166,7 +166,8 @@ public class Grid implements IGrid
     {
     	if(!path.isComplete())
     	{
-    		throw new InvalidPathException("Cannot determine area of an incomplete path.");
+    		// TODO: Determine when this should be thrown.
+    		// throw new InvalidPathException("Cannot determine area of an incomplete path.");
     	}
     	IArea result = new Area();
     	Collection<IVertex> areaVertices = new ArrayList<IVertex>();
