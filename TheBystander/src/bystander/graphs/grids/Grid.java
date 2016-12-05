@@ -15,11 +15,28 @@ import bystander.graphs.interfaces.IEdge;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IVertex;
 
+/**
+ * @author Gus
+ * Represents a puzzle grid. The grid consists of vertices as points, with edges allowing travel between them and
+ * faces representing the non-overlapping areas contained within collection of vertices and points.
+ */
 public class Grid implements IGrid 
 {
     private IVertex[][] vertices;
     private Collection<IEdge> edges;
     private Collection<IFace> faces;
+    private int rows;
+    private int columns;
+    
+    public int getRows()
+    {
+    	return rows;
+    }
+    
+    public int getColumns()
+    {
+    	return columns;
+    }
     
     public IVertex[][] getVertices() {
 		return vertices;
@@ -34,6 +51,8 @@ public class Grid implements IGrid
         edges = new ArrayList<IEdge>();
         faces = new ArrayList<IFace>();
         vertices = new Vertex[numRows][numColumns];
+        this.rows = numRows;
+        this.columns = numColumns;
     }
 	
 	public void addFace(IFace face)
@@ -164,11 +183,6 @@ public class Grid implements IGrid
     
     private IArea areaSpannedByCompletePath(IPath path) throws InvalidPathException
     {
-    	if(!path.isComplete())
-    	{
-    		// TODO: Determine when this should be thrown.
-    		// throw new InvalidPathException("Cannot determine area of an incomplete path.");
-    	}
     	IArea result = new Area();
     	Collection<IVertex> areaVertices = new ArrayList<IVertex>();
     	areaVertices.addAll(path.getVertices());

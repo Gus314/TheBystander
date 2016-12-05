@@ -8,5 +8,6 @@ import bystander.graphs.interfaces.IPath;
 
 public interface IRule 
 {
-	boolean isRuleMet(Collection<IArea> areas, IPath path, IGrid grid);
+	//Note that the number of failures must be returned rather than a boolean success/failure status to allow the IgnoreFaceRule to function.
+	int ruleFailures(Collection<IArea> areas, IPath path, IGrid grid);
 }

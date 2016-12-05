@@ -6,7 +6,6 @@ import java.util.Map;
 
 import bystander.enums.StartOrExit;
 import bystander.exceptions.InvalidGridException;
-import bystander.exceptions.InvalidVertexException;
 import bystander.graphs.DecorationSpecification;
 import bystander.graphs.Edge;
 import bystander.graphs.Vertex;

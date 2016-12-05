@@ -4,39 +4,33 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import bystander.enums.Colour;
-import bystander.graphs.faces.interfaces.IColouredFace;
+import bystander.graphs.faces.interfaces.IStarFace;
 
 /**
- * 
  * @author Gus
- * Represents a face with a colour, with no rules attached.
+ * Represents a coloured star face. It must be paired with exactly one other star of the same colour
+ * in the same area. If there is only one of a given colour it may be paired with a square face of the
+ * same colour in that area.
  */
-public abstract class ColouredFace extends Face implements IColouredFace, Serializable
+public class StarFace extends ColouredFace implements IStarFace, Serializable 
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Colour colour;
-	public Colour getColour()
+
+	public StarFace(Colour colour) 
 	{
-		return colour;
-	}
-	
-	public ColouredFace(Colour colour)
-	{
-		this.colour = colour;
+		super(colour);
 	}
 	
 	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
 	 {
-		 out.writeChars(colour.toString());
 		 super.writeObject(out);
 	 }
 	 
 	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	 {
-		 colour = Colour.valueOf(in.readUTF());
 		 super.readObject(in);
 	 }
 }

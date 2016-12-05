@@ -11,6 +11,10 @@ import bystander.graphs.interfaces.IEdge;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IVertex;
 
+/**
+ * @author Gus
+ * Represents a path along the vertices of a graph, travelling via the edges.
+ */
 public class Path implements IPath, Serializable
 {
 	// TODO: Design flaw - edges could be added via getEdges.	

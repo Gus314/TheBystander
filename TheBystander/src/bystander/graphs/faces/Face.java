@@ -8,6 +8,10 @@ import java.util.Collection;
 import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IVertex;
 
+/**
+ * @author Gus
+ * Represents a face consisting of only vertices.
+ */
 public class Face implements IFace, Serializable
 {
 	/**

@@ -16,20 +16,26 @@ public class RuleChecker implements IRuleChecker
 	
 	public RuleChecker(IGrid grid)
 	{
-		rules.add(new ColouredFacesRule());
-		rules.add(new MandatoryEdgesRule());
+		rules.add(new SquareFacesRule());
+		rules.add(new MandatoryRule());
+		rules.add(new BlueBlocksRule());
+		rules.add(new ForbiddenRule());
+		rules.add(new IgnoreFaceRule());
+		rules.add(new StarsRule());
+		rules.add(new TetrominosRule());
 		this.grid = grid;
 	}
 	
 	public boolean isSolution(Collection<IArea> areas, IPath path)
 	{
+		int failures = 0;
+		
+		// Note that the number of failures must be returned rather than a boolean success/failure status to allow the IgnoreFaceRule to function.
 		for(IRule rule: rules)
 		{
-			if(!rule.isRuleMet(areas, path, grid))
-			{
-				return false;
-			}
+			failures += rule.ruleFailures(areas, path, grid);
+
 		}
-		return true;
+		return (0 == failures);
 	}	
 }
