@@ -11,7 +11,7 @@ import bystander.exceptions.InvalidPathException;
 import bystander.graphs.DecorationSpecification;
 import bystander.graphs.PathFinder;
 import bystander.graphs.decorations.Mandatory;
-import bystander.graphs.faces.ColouredFace;
+import bystander.graphs.faces.SquareFace;
 import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.grids.GridFactory;
 import bystander.graphs.grids.IGrid;
@@ -63,9 +63,9 @@ public class Controller
 		IGridFactory gridFactory = new GridFactory();
 		
 		Map<IFace, Position> specialFaces = new HashMap<IFace, Position>();
-		IFace blackFace = new ColouredFace(Colour.BLACK);
+		IFace blackFace = new SquareFace(Colour.BLACK);
 		specialFaces.put(blackFace, new Position(2, 1));
-		IFace whiteFace = new ColouredFace(Colour.WHITE);
+		IFace whiteFace = new SquareFace(Colour.WHITE);
 		specialFaces.put(whiteFace, new Position(3,4));
 		Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
 		DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());

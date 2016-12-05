@@ -4,39 +4,32 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import bystander.enums.Colour;
-import bystander.graphs.faces.interfaces.IColouredFace;
+import bystander.graphs.faces.interfaces.ISquareFace;
 
 /**
- * 
  * @author Gus
- * Represents a face with a colour, with no rules attached.
+ * Represents a coloured face such that any other coloured faces in the
+ * same area must have the same colour.
  */
-public abstract class ColouredFace extends Face implements IColouredFace, Serializable
-{
+public class SquareFace extends ColouredFace implements ISquareFace, Serializable{
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Colour colour;
-	public Colour getColour()
+
+	public SquareFace(Colour colour) 
 	{
-		return colour;
-	}
-	
-	public ColouredFace(Colour colour)
-	{
-		this.colour = colour;
+		super(colour);
 	}
 	
 	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
 	 {
-		 out.writeChars(colour.toString());
 		 super.writeObject(out);
 	 }
 	 
 	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	 {
-		 colour = Colour.valueOf(in.readUTF());
 		 super.readObject(in);
 	 }
 }

@@ -3,40 +3,41 @@ package bystander.graphs.faces;
 import java.io.IOException;
 import java.io.Serializable;
 
-import bystander.enums.Colour;
-import bystander.graphs.faces.interfaces.IColouredFace;
+import bystander.graphs.faces.interfaces.IBlueBlocksFace;
 
 /**
  * 
  * @author Gus
- * Represents a face with a colour, with no rules attached.
+ * This class represents a face with a number of blue blocks, meaning that that number
+ * of blocks from tetrominos in the area may be omitted.
  */
-public abstract class ColouredFace extends Face implements IColouredFace, Serializable
+public class BlueBlocksFace extends Face implements IBlueBlocksFace, Serializable
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Colour colour;
-	public Colour getColour()
+	private int count;
+	
+	public int getCount()
 	{
-		return colour;
+		return count;
 	}
 	
-	public ColouredFace(Colour colour)
+	public BlueBlocksFace(int count)
 	{
-		this.colour = colour;
+		this.count = count;
 	}
 	
 	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
-	 {
-		 out.writeChars(colour.toString());
+	 {		
 		 super.writeObject(out);
+		 out.writeInt(count);
 	 }
 	 
 	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	 {
-		 colour = Colour.valueOf(in.readUTF());
 		 super.readObject(in);
+		 count = in.readInt();
 	 }
 }

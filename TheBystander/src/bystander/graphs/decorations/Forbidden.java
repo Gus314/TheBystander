@@ -7,10 +7,10 @@ import bystander.graphs.Decoration;
 
 /**
  * @author Gus
- * A rule used to decorate a mandatory edge. The correct solution must use this edge.
+ * A rule used to indicate a forbidden edge. The correct solution may not use this edge.
  */
-public class Mandatory extends Decoration implements Serializable{
-
+public class Forbidden extends Decoration implements Serializable
+{
 	/**
 	 * 
 	 */
@@ -22,5 +22,5 @@ public class Mandatory extends Decoration implements Serializable{
 	 
 	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
 	 {
-	 }	 
+	 }	
 }
