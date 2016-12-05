@@ -2,6 +2,7 @@ package bystander.graphs;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import bystander.graphs.interfaces.IDecoration;
@@ -23,12 +24,13 @@ public class Edge implements IEdge, Serializable
 		return target;
 	}
 
-	public Collection<IDecoration> getDecorations() {
+	public Collection<IDecoration> getDecorations()
+	{
 		return decorations;
 	}
 
 	private IVertex target;
-	private Collection<IDecoration> decorations;
+	private Collection<IDecoration> decorations = new ArrayList<IDecoration>();
 
     public Edge(IVertex source, IVertex target)
     {
@@ -52,6 +54,7 @@ public class Edge implements IEdge, Serializable
 	 {
 		 source = (IVertex) in.readObject();
 		 target = (IVertex) in.readObject();
+		 decorations = new ArrayList<IDecoration>();
 		 int decorationCount = in.readInt();
 		 for(int i = 0; i < decorationCount; i++)
 		 {

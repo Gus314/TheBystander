@@ -6,6 +6,7 @@ import java.util.Collection;
 import bystander.enums.Colour;
 import bystander.enums.StartOrExit;
 import bystander.exceptions.InvalidVertexException;
+import bystander.graphs.decorations.Mandatory;
 import bystander.graphs.faces.ColouredFace;
 import bystander.graphs.faces.Face;
 import bystander.graphs.faces.interfaces.IFace;
@@ -31,9 +32,18 @@ public class GridFactory implements IGridFactory
                 if (i > 0)
                 {
                     IVertex upVertex = vertices[i - 1][j];
+                    // TODO: Produce a far better way of producing mandatory edges.
                     IEdge edge = new Edge(newVertex, upVertex);
+                    if(i == 0 && j == 1)
+                    {
+                    	edge.getDecorations().add(new Mandatory());
+                    }
                     result.addEdge(edge);
                     IEdge reverseEdge = new Edge(upVertex, newVertex);
+                    if(i == 0 && j == 1)
+                    {
+                    	reverseEdge.getDecorations().add(new Mandatory());
+                    }
                     result.addEdge(reverseEdge);
                 }
                 if(j > 0)

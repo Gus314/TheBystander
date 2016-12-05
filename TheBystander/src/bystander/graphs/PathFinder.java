@@ -18,7 +18,7 @@ public class PathFinder implements IPathFinder
 	
     private void tryPath(IVertex currentVertex, IGrid grid, IPath p, Collection<IPath> results)
     {
-    	if(results.size() == 10)//1000000)
+    	if(results.size() == 1000)//1000000)
     	{
     		// TODO: Temporary restriction.
     		kill = true;

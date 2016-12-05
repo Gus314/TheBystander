@@ -8,21 +8,18 @@ import java.util.Map;
 import bystander.exceptions.InvalidPathException;
 import bystander.graphs.GridFactory;
 import bystander.graphs.PathFinder;
-import bystander.graphs.RuleChecker;
 import bystander.graphs.interfaces.IArea;
 import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IGridFactory;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IPathFinder;
-import bystander.graphs.interfaces.IRuleChecker;
+import bystander.graphs.rules.RuleChecker;
+import bystander.graphs.rules.interfaces.IRuleChecker;
 
 public class Controller
 {
-	private static Map<IPath, Collection<IArea>> retrieveData()
-	{
-		IGridFactory gridFactory = new GridFactory();
-        IGrid grid = gridFactory.Construct();
-        
+	private static Map<IPath, Collection<IArea>> retrieveData(IGrid grid)
+	{        
         Map<IPath, Collection<IArea>> data = Repository.readData();
         Collection<IPath> completePaths = (data == null) ? null : data.keySet();
         if(completePaths == null)
@@ -58,9 +55,12 @@ public class Controller
 	
 	public static void main(String[] args)
 	{
-		Map<IPath, Collection<IArea>> data = retrieveData();
+		IGridFactory gridFactory = new GridFactory();
+        IGrid grid = gridFactory.Construct();
+        
+		Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());
- 		IRuleChecker ruleChecker = new RuleChecker();
+ 		IRuleChecker ruleChecker = new RuleChecker(grid);
  		
      	for(IPath path: data.keySet())
      	{
