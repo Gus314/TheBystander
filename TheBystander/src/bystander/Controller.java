@@ -5,12 +5,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import bystander.enums.Colour;
 import bystander.exceptions.InvalidPathException;
-import bystander.graphs.GridFactory;
+import bystander.graphs.DecorationSpecification;
 import bystander.graphs.PathFinder;
+import bystander.graphs.decorations.Mandatory;
+import bystander.graphs.faces.ColouredFace;
+import bystander.graphs.faces.interfaces.IFace;
+import bystander.graphs.grids.GridFactory;
+import bystander.graphs.grids.IGrid;
+import bystander.graphs.grids.IGridFactory;
+import bystander.graphs.grids.Position;
 import bystander.graphs.interfaces.IArea;
-import bystander.graphs.interfaces.IGrid;
-import bystander.graphs.interfaces.IGridFactory;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IPathFinder;
 import bystander.graphs.rules.RuleChecker;
@@ -56,22 +62,38 @@ public class Controller
 	public static void main(String[] args)
 	{
 		IGridFactory gridFactory = new GridFactory();
-        IGrid grid = gridFactory.Construct();
+		
+		Map<IFace, Position> specialFaces = new HashMap<IFace, Position>();
+		IFace blackFace = new ColouredFace(Colour.BLACK);
+		specialFaces.put(blackFace, new Position(2, 1));
+		IFace whiteFace = new ColouredFace(Colour.WHITE);
+		specialFaces.put(whiteFace, new Position(3,4));
+		Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
+		DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());
+		decorationSpecifications.add(blackSpot);		
+		
+        IGrid grid = gridFactory.Construct(8, 8, new Position(0,0), new Position(7,7), specialFaces, decorationSpecifications);
         
 		Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());
  		IRuleChecker ruleChecker = new RuleChecker(grid);
  		
+ 		boolean succeeded = false;
      	for(IPath path: data.keySet())
      	{
      		if(ruleChecker.isSolution(data.get(path), path))
      		{
+     			succeeded = true;
      			System.out.println("Solved.");
      			System.out.println(path);
      			break;
      		}
      	}
      	
+     	if(!succeeded)
+     	{
+     		System.out.println("Failed to find a solution.");
+     	}
         System.out.println("Finished.");
 	}
 }

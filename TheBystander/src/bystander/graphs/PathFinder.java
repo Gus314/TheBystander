@@ -6,8 +6,8 @@ import java.util.List;
 
 import bystander.enums.StartOrExit;
 import bystander.exceptions.InvalidPathException;
+import bystander.graphs.grids.IGrid;
 import bystander.graphs.interfaces.IEdge;
-import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IPathFinder;
 import bystander.graphs.interfaces.IVertex;

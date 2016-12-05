@@ -3,10 +3,10 @@ package bystander.graphs.rules;
 import java.util.Collection;
 
 import bystander.graphs.decorations.Mandatory;
+import bystander.graphs.grids.IGrid;
 import bystander.graphs.interfaces.IArea;
 import bystander.graphs.interfaces.IDecoration;
 import bystander.graphs.interfaces.IEdge;
-import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.rules.interfaces.IRule;
 

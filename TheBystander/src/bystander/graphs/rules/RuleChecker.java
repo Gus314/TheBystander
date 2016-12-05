@@ -3,8 +3,8 @@ package bystander.graphs.rules;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bystander.graphs.grids.IGrid;
 import bystander.graphs.interfaces.IArea;
-import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.rules.interfaces.IRule;
 import bystander.graphs.rules.interfaces.IRuleChecker;

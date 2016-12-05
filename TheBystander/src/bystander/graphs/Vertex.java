@@ -1,5 +1,6 @@
 package bystander.graphs;
 
+import bystander.graphs.grids.Position;
 import bystander.graphs.interfaces.IVertex;
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,6 +24,11 @@ public class Vertex implements IVertex, Serializable
 
 	public int getColumn() {
 		return column;
+	}
+	
+	public Position getPosition()
+	{
+		return new Position(row, column);
 	}
 
 	private StartOrExit startOrExit;
