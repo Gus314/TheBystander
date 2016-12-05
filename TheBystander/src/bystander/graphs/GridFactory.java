@@ -96,7 +96,8 @@ public class GridFactory implements IGridFactory
 					face.addVertex(vertices[i+1][j+1]);
 					faces.add(face);
 				}
-				catch(InvalidVertexException invex)
+				//TODO fix the exception
+				catch(Exception invex)
 				{
 					System.out.println(invex.getMessage());
 				}

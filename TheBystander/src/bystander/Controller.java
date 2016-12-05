@@ -20,8 +20,7 @@ import bystander.graphs.grids.Position;
 import bystander.graphs.interfaces.IArea;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IPathFinder;
-import bystander.graphs.rules.RuleChecker;
-import bystander.graphs.rules.interfaces.IRuleChecker;
+import bystander.ui.GridDrawer;
 
 public class Controller
 {
@@ -91,7 +90,10 @@ public class Controller
 			System.out.println(e.getMessage());
 			System.exit(-1);
 		}
-        
+
+        GridDrawer.drawGrid(grid);
+
+        /*
 		Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());
  		IRuleChecker ruleChecker = new RuleChecker(grid);
@@ -113,6 +115,7 @@ public class Controller
      		System.out.println("Failed to find a solution.");
      	}
         System.out.println("Finished.");
+        */
 	}
 }
 
