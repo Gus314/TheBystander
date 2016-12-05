@@ -1,18 +1,17 @@
 package bystander.graphs;
 
 import bystander.graphs.interfaces.IVertex;
-import bystander.graphs.interfaces.IDecoration;
-
-import java.util.Collection;
+import java.io.IOException;
+import java.io.Serializable;
 
 import bystander.enums.StartOrExit;
 
-public class Vertex implements IVertex
+public class Vertex implements IVertex, Serializable
 {
-    private Collection<IDecoration> decorations;
-    public Collection<IDecoration> getDecorations() {
-		return decorations;
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public StartOrExit getStartOrExit() {
 		return startOrExit;
@@ -47,4 +46,18 @@ public class Vertex implements IVertex
     {
     	return "(" + row + "," + column + ")";
     }
+    
+	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
+	 {
+		 out.writeInt(row);
+		 out.writeInt(column);
+		 out.writeChars(startOrExit.toString());
+	 }
+	 
+	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	 {
+		 row = in.readInt();
+		 column = in.readInt();
+		 startOrExit = StartOrExit.valueOf(in.readUTF());
+	 }
 }

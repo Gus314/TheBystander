@@ -2,6 +2,8 @@ package bystander;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import bystander.exceptions.InvalidPathException;
 import bystander.graphs.GridFactory;
@@ -16,39 +18,61 @@ import bystander.graphs.interfaces.IRuleChecker;
 
 public class Controller
 {
+	private static Map<IPath, Collection<IArea>> retrieveData()
+	{
+		IGridFactory gridFactory = new GridFactory();
+        IGrid grid = gridFactory.Construct();
+        
+        Map<IPath, Collection<IArea>> data = Repository.readData();
+        Collection<IPath> completePaths = (data == null) ? null : data.keySet();
+        if(completePaths == null)
+        {
+        	System.out.println("Could not load paths, this may take some time (approximately 20 minutes).");
+        	IPathFinder pathFinder = new PathFinder();
+        	completePaths = pathFinder.findPaths(grid);
+        	data = new HashMap<IPath, Collection<IArea>>();
+        	for(IPath p: completePaths)
+            {      	
+            	/*System.out.println(p);*/
+                Collection<IArea> areas = new ArrayList<IArea>();
+            	try 
+            	{
+    				areas.addAll(grid.determineAreas(p));
+    				data.put(p, areas);
+    			} 
+            	catch (InvalidPathException e) 
+            	{
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}          	
+            }  
+        	
+        	Repository.writeData(data);
+        }
+        else
+        {
+        	System.out.println("Successfully loaded paths.");
+        }
+        return data;
+	}
+	
 	public static void main(String[] args)
 	{
-        IGridFactory gridFactory = new GridFactory();
-        IGrid grid = gridFactory.Construct();
-        IPathFinder pathFinder = new PathFinder();
-        Collection<IPath> completePaths = pathFinder.findPaths(grid);
-        System.out.println("completePaths.size() == " + completePaths.size());
-        int i = 0;
-        for(IPath p: completePaths)
-        {
-        	i++;
-        	/*System.out.println(p);*/
-            Collection<IArea> areas = new ArrayList<IArea>();
-        	try 
-        	{
-				areas.addAll(grid.determineAreas(p));
-				IRuleChecker ruleChecker = new RuleChecker();	
-				boolean isSolution = ruleChecker.isSolution(areas, p);
-				System.out.println(isSolution ? "Solved." : "Failed Attempt " + i);
-				if(isSolution)
-				{
-					break;
-				}
-				/*for(IArea area: areas)
-				{
-					System.out.println(area);;	
-				}*/
-			} 
-        	catch (InvalidPathException e) 
-        	{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }      
+		Map<IPath, Collection<IArea>> data = retrieveData();
+     	System.out.println("Total number of paths being considered:" + data.keySet().size());
+ 		IRuleChecker ruleChecker = new RuleChecker();
+ 		
+     	for(IPath path: data.keySet())
+     	{
+     		if(ruleChecker.isSolution(data.get(path), path))
+     		{
+     			System.out.println("Solved.");
+     			System.out.println(path);
+     			break;
+     		}
+     	}
+     	
+        System.out.println("Finished.");
 	}
 }
+

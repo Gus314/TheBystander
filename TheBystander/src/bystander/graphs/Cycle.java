@@ -7,8 +7,12 @@ import bystander.graphs.interfaces.IEdge;
 import bystander.graphs.interfaces.IPath;
 
 // Conceptually a cycle is a path the may visit the same vertex twice, provided that vertex is both the start and end vertex.
-public class Cycle extends Path implements ICycle 
+public class Cycle extends Path implements ICycle
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private boolean completed;
 	
 	public Cycle(IPath path)
@@ -77,4 +81,6 @@ public class Cycle extends Path implements ICycle
             throw new InvalidPathException("Cannot add edge to path, source and target do not match.");
         }
     }
+	
+	
 }

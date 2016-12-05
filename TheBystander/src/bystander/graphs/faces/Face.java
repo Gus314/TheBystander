@@ -1,5 +1,8 @@
 package bystander.graphs.faces;
 
+import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -7,8 +10,12 @@ import bystander.exceptions.InvalidVertexException;
 import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IVertex;
 
-public class Face implements IFace
+public class Face implements IFace, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Collection<IVertex> vertices = new ArrayList<IVertex>();;
 
 	public Collection<IVertex> getVertices()
@@ -63,4 +70,28 @@ public class Face implements IFace
 		result += "(" + (getBottomLeftVertex().getRow()+1) + ", " + (getBottomLeftVertex().getColumn()+1) + ")";
 		return result += "</Face>";
 	}
+	
+	 protected void writeObject(java.io.ObjectOutputStream out) throws IOException
+	 {
+		 out.writeInt(vertices.size());
+		 IVertex[] vertexArray = (IVertex[]) vertices.toArray();
+		 for(int i = 0; i < vertices.size(); i++)
+		 {
+			 out.writeObject(vertexArray[i]);
+		 }
+	 }
+	 
+	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	 {
+		 int count = in.readInt();
+		 for(int i = 0; i < count; i++)
+		 {
+			 vertices.add((IVertex)in.readObject());
+		 }
+	 }
+	 
+	 private void readObjectNoData() throws ObjectStreamException
+	 {
+		 ;
+	 }
 }

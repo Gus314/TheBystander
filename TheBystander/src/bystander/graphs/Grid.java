@@ -13,7 +13,7 @@ import bystander.graphs.interfaces.IGrid;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IVertex;
 
-public class Grid implements IGrid
+public class Grid implements IGrid 
 {
     private final int numRows = 8;
     private final int numColumns = 8;

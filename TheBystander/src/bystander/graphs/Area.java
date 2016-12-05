@@ -1,13 +1,19 @@
 package bystander.graphs;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IArea;
 
-public class Area implements IArea
+public class Area implements IArea, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Collection<IFace> faces;
 	
 	public Area()
@@ -34,4 +40,23 @@ public class Area implements IArea
 		}
 		return result + "</Area>\n";
 	}
+	
+	 private void writeObject(java.io.ObjectOutputStream out) throws IOException
+	 {
+		 out.writeInt(faces.size());
+		 for(IFace face: faces)
+		 {
+			 out.writeObject(face);
+		 }
+	 }
+	 
+	 private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	 {
+		 faces = new ArrayList<IFace>();
+		 int numFaces = in.readInt();
+		 for(int i = 0; i < numFaces; i++)
+		 {
+			 faces.add((IFace)in.readObject());
+		 }
+	 }
 }

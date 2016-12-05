@@ -1,5 +1,7 @@
 package bystander.graphs;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +11,14 @@ import bystander.graphs.interfaces.IEdge;
 import bystander.graphs.interfaces.IPath;
 import bystander.graphs.interfaces.IVertex;
 
-public class Path implements IPath
+public class Path implements IPath, Serializable
 {
-    private List<IEdge> edges = new ArrayList<IEdge>();
+	// TODO: Make getEdges() private to prevent getEdges().add producing an impossible path.	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private List<IEdge> edges = new ArrayList<IEdge>();
     private List<IVertex> vertices = new ArrayList<IVertex>();
         
     public List<IEdge> getEdges() {
@@ -148,4 +155,37 @@ public class Path implements IPath
     	result += getEdges().get(getEdges().size()-1).getTarget();
     	return result + "</Path>";
     }
+    
+	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
+	 {
+		 out.writeInt(vertices.size());
+		 IVertex[] verticesArray = (IVertex[]) vertices.toArray();
+		 for(int i = 0; i < vertices.size(); i++)
+		 {
+			 out.writeObject(verticesArray[i]);
+		 }
+		 out.writeInt(edges.size());	 
+		 IEdge[] edgesArray = (IEdge[]) edges.toArray();
+		 for(int i = 0; i < edges.size(); i++)
+		 {
+			 out.writeObject(edgesArray[i]);
+		 }
+	 }
+	 
+	 protected void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	 {
+		 vertices  = new ArrayList<IVertex>();
+		 edges = new ArrayList<IEdge>();
+		 
+		 int verticesCount = in.readInt();
+		 for(int i = 0; i < verticesCount; i++)
+		 {
+			 vertices.add((IVertex)in.readObject());
+		 }
+		 int edgesCount = in.readInt(); 
+		 for(int i = 0; i < edgesCount; i++)
+		 {
+			 edges.add((IEdge)(in.readObject()));
+		 }
+	 }
 }
