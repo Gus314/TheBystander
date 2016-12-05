@@ -17,9 +17,9 @@ import bystander.graphs.interfaces.IVertex;
 
 public class Grid implements IGrid 
 {
-    private final int numRows = 8;
-    private final int numColumns = 8;
-    private IVertex[][] vertices = new Vertex[numRows][numColumns];
+    private int numRows = 0;
+    private int numColumns = 0;
+    private IVertex[][] vertices;
     private Collection<IEdge> edges;
     private Collection<IFace> faces;
     
@@ -31,10 +31,13 @@ public class Grid implements IGrid
 		return edges;
 	}
 
-	public Grid()
+	public Grid(int numRows, int numColumns)
     {
         edges = new ArrayList<IEdge>();
         faces = new ArrayList<IFace>();
+        this.numRows = numRows;
+        this.numColumns = numColumns;
+        vertices = new Vertex[numRows][numColumns];
     }
 
 	@SuppressWarnings("unused")

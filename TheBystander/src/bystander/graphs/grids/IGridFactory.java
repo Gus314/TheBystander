@@ -8,5 +8,5 @@ import bystander.graphs.faces.interfaces.IFace;
 
 public interface IGridFactory 
 {
-	IGrid Construct(int rows, int columns, Position start, Position exit, Map<IFace, Position> specialFaces, Collection<DecorationSpecification> decorationSpecifications);
+	IGrid Construct(int rows, int columns, Collection<Position> startPositions, Collection<Position> exitPositions, Map<IFace, Position> specialFaces, Collection<DecorationSpecification> decorationSpecifications);
 }

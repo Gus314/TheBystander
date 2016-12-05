@@ -26,17 +26,31 @@ public class GridFactory implements IGridFactory
         	}
         }
 	}
+		
+	private static boolean isIn(Position p, Collection<Position> poses)
+	{ // TODO: Remove the need for this!
+	   for(Position pos: poses)
+	   {
+		   if(p.getRow() == pos.getRow() && p.getColumn() == pos.getColumn())
+		   {
+			   return true;
+		   }
+	   }
+	   
+	   return false;
+	}
 	
-    public IGrid Construct(int rows, int columns, Position start, Position exit, Map<IFace, Position> specialFaces, Collection<DecorationSpecification> decorationSpecifications)
+    public IGrid Construct(int rows, int columns, Collection<Position> startPositions, Collection<Position> exitPositions, Map<IFace, Position> specialFaces, Collection<DecorationSpecification> decorationSpecifications)
     {
     	// TODO: Add validation of positions and size.
-        IGrid result = new Grid();
+        IGrid result = new Grid(rows, columns);
         IVertex[][] vertices = new IVertex[rows][columns];
         for(int i = 0; i < rows; ++i)
         {
             for(int j = 0; j < columns; ++j)
             {
-                StartOrExit startOrExit = (i == start.getRow() && j == start.getColumn()) ? StartOrExit.START : (i == exit.getRow() && j == exit.getColumn()) ? StartOrExit.EXIT : StartOrExit.NEITHER;
+            	Position position = new Position(i,j);
+                StartOrExit startOrExit = isIn(position, startPositions) ? StartOrExit.START : isIn(position, exitPositions) ? StartOrExit.EXIT : StartOrExit.NEITHER;
                 IVertex newVertex = new Vertex(i, j, startOrExit);
                 vertices[i][j] = newVertex;
                 result.addVertex(newVertex, i, j);
@@ -66,7 +80,7 @@ public class GridFactory implements IGridFactory
             }
         }
         
-        Collection<IFace> faces = determineFaces(vertices, specialFaces);
+        Collection<IFace> faces = determineFaces(vertices, rows, columns, specialFaces);
     
         for(IFace face: faces)
         {
@@ -76,16 +90,16 @@ public class GridFactory implements IGridFactory
         return result;
     }
     
-	private Collection<IFace> determineFaces(IVertex[][] vertices, Map<IFace, Position> specialFaces)
+	private Collection<IFace> determineFaces(IVertex[][] vertices, int rows, int columns, Map<IFace, Position> specialFaces)
 	{
 		Collection<IFace> faces = new ArrayList<IFace>();
 		
 		// Rearrange the faces on the graph as vertices and edges are added. A face is a minimal cycle
 		// and they cannot overlap.
 		// TODO: Generalize to non-rectangular graphs.
-		for(int i = 0; i < 8 - 1; ++i)
+		for(int i = 0; i < rows - 1; ++i)
 		{
-			for(int j = 0; j < 8 - 1; ++j)
+			for(int j = 0; j < columns - 1; ++j)
 			{
 				try
 				{	

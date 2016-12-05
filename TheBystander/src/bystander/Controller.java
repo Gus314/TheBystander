@@ -70,9 +70,18 @@ public class Controller
 		specialFaces.put(whiteFace, new Position(3,4));
 		Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
 		DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());
-		decorationSpecifications.add(blackSpot);		
+		decorationSpecifications.add(blackSpot);	
 		
-        IGrid grid = gridFactory.Construct(8, 8, new Position(0,0), new Position(7,7), specialFaces, decorationSpecifications);
+		Collection<Position> startPositions = new ArrayList<Position>();
+		startPositions.add(new Position(0,0));
+		startPositions.add(new Position(7,0));
+
+		
+		Collection<Position> exitPositions = new ArrayList<Position>();
+		exitPositions.add(new Position(7,7));
+		exitPositions.add(new Position(0,7));	
+		
+        IGrid grid = gridFactory.Construct(8, 8, startPositions, exitPositions, specialFaces, decorationSpecifications);
         
 		Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());
