@@ -5,8 +5,6 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import bystander.exceptions.InvalidVertexException;
 import bystander.graphs.faces.interfaces.IFace;
 import bystander.graphs.interfaces.IVertex;
 
@@ -27,16 +25,14 @@ public class Face implements IFace, Serializable
 	{
 	}
 	
-	public void addVertex(IVertex vertex) throws InvalidVertexException
+	public void addVertex(IVertex vertex)
 	{
 		// A face in a graph consists of a minimal cycle. Faces cannot overlap.
-		// TODO: Check for overlapping of faces. This will only occur once non-rectangular puzzles are considered.
 		vertices.add(vertex);
 	}
 	
 	public IVertex getBottomLeftVertex()
 	{
-		// TODO: Remove this?
 		IVertex result = null;
 		
 		for(IVertex v: vertices)
@@ -62,12 +58,13 @@ public class Face implements IFace, Serializable
 	
 	public String toString()
 	{
-		// TODO: Tidy this function.
+		int row = getBottomLeftVertex().getRow();
+		int column = getBottomLeftVertex().getColumn();
 		String result = "<Face>";
-		result += "(" + getBottomLeftVertex().getRow() + ", " + getBottomLeftVertex().getColumn() + ")";
-		result += "(" + getBottomLeftVertex().getRow() + ", " + (getBottomLeftVertex().getColumn()+1) + ")";
-		result += "(" + (getBottomLeftVertex().getRow()+1) + ", " + getBottomLeftVertex().getColumn() + ")";
-		result += "(" + (getBottomLeftVertex().getRow()+1) + ", " + (getBottomLeftVertex().getColumn()+1) + ")";
+		result += "(" + row + ", " + column + ")";
+		result += "(" + row + ", " + (column+1) + ")";
+		result += "(" + (row+1) + ", " + column + ")";
+		result += "(" + (row+1) + ", " + (column+1) + ")";
 		return result += "</Face>";
 	}
 	
@@ -90,8 +87,10 @@ public class Face implements IFace, Serializable
 		 }
 	 }
 	 
+	 @SuppressWarnings("unused")
+	 // Might be called during serialization.
 	 private void readObjectNoData() throws ObjectStreamException
 	 {
-		 ;
+		 vertices = new ArrayList<IVertex>();
 	 }
 }

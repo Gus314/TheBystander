@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import bystander.enums.StartOrExit;
+import bystander.exceptions.InvalidGridException;
 import bystander.exceptions.InvalidVertexException;
 import bystander.graphs.DecorationSpecification;
 import bystander.graphs.Edge;
@@ -26,23 +27,15 @@ public class GridFactory implements IGridFactory
         	}
         }
 	}
-		
-	private static boolean isIn(Position p, Collection<Position> poses)
-	{ // TODO: Remove the need for this!
-	   for(Position pos: poses)
-	   {
-		   if(p.getRow() == pos.getRow() && p.getColumn() == pos.getColumn())
-		   {
-			   return true;
-		   }
-	   }
-	   
-	   return false;
-	}
 	
-    public IGrid Construct(int rows, int columns, Collection<Position> startPositions, Collection<Position> exitPositions, Map<IFace, Position> specialFaces, Collection<DecorationSpecification> decorationSpecifications)
+    public IGrid Construct(int rows, int columns, Collection<Position> startPositions, Collection<Position> exitPositions, Map<IFace, Position> specialFaces,
+    						Collection<DecorationSpecification> decorationSpecifications) throws InvalidGridException
     {
-    	// TODO: Add validation of positions and size.
+    	if(rows < 1 || columns < 1)
+    	{
+    		throw new InvalidGridException("Invalid grid, number of rows and columns must both be greater than 0.");
+    	}
+    	
         IGrid result = new Grid(rows, columns);
         IVertex[][] vertices = new IVertex[rows][columns];
         for(int i = 0; i < rows; ++i)
@@ -50,14 +43,13 @@ public class GridFactory implements IGridFactory
             for(int j = 0; j < columns; ++j)
             {
             	Position position = new Position(i,j);
-                StartOrExit startOrExit = isIn(position, startPositions) ? StartOrExit.START : isIn(position, exitPositions) ? StartOrExit.EXIT : StartOrExit.NEITHER;
+                StartOrExit startOrExit = startPositions.contains(position) ? StartOrExit.START : exitPositions.contains(position) ? StartOrExit.EXIT : StartOrExit.NEITHER;
                 IVertex newVertex = new Vertex(i, j, startOrExit);
                 vertices[i][j] = newVertex;
                 result.addVertex(newVertex, i, j);
                 if (i > 0)
                 {
                     IVertex upVertex = vertices[i - 1][j];
-                    // TODO: Produce a far better way of producing mandatory edges.
                     IEdge edge = new Edge(newVertex, upVertex);
                     decorateEdge(edge, newVertex, upVertex, decorationSpecifications);                   
                     result.addEdge(edge);
@@ -96,32 +88,24 @@ public class GridFactory implements IGridFactory
 		
 		// Rearrange the faces on the graph as vertices and edges are added. A face is a minimal cycle
 		// and they cannot overlap.
-		// TODO: Generalize to non-rectangular graphs.
 		for(int i = 0; i < rows - 1; ++i)
 		{
 			for(int j = 0; j < columns - 1; ++j)
-			{
-				try
-				{	
-					IFace face = new Face();
-					for(IFace specialFace: specialFaces.keySet())
-					{
-						if(specialFaces.get(specialFace).getRow() == i && specialFaces.get(specialFace).getColumn() == j)
-						{
-							face = specialFace;
-							break;
-						}
-					}	
-					face.addVertex(vertices[i][j]);
-					face.addVertex(vertices[i+1][j]);
-					face.addVertex(vertices[i][j+1]);
-					face.addVertex(vertices[i+1][j+1]);
-					faces.add(face);
-				}
-				catch(InvalidVertexException invex)
+			{	
+				IFace face = new Face();
+				for(IFace specialFace: specialFaces.keySet())
 				{
-					System.out.println(invex.getMessage());
-				}
+					if(specialFaces.get(specialFace).getRow() == i && specialFaces.get(specialFace).getColumn() == j)
+					{
+						face = specialFace;
+						break;
+					}
+				}	
+				face.addVertex(vertices[i][j]);
+				face.addVertex(vertices[i+1][j]);
+				face.addVertex(vertices[i][j+1]);
+				face.addVertex(vertices[i+1][j+1]);
+				faces.add(face);
 			}
 		}
 		return faces;

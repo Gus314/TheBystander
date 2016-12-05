@@ -22,7 +22,6 @@ public class ColouredFacesRule implements IRule
 			{
 				if(face instanceof IColouredFace)
 				{
-					// TODO: Might eventually want a way to mark faces as failed.
 					IColouredFace colouredFace = (IColouredFace)face;
 					if(coloursInArea.size() == 0)
 					{

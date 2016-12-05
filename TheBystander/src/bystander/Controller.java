@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bystander.enums.Colour;
+import bystander.exceptions.InvalidGridException;
 import bystander.exceptions.InvalidPathException;
 import bystander.graphs.DecorationSpecification;
 import bystander.graphs.PathFinder;
@@ -45,8 +46,7 @@ public class Controller
     			} 
             	catch (InvalidPathException e) 
             	{
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
+    				System.out.println(e.getMessage());
     			}          	
             }  
         	
@@ -74,14 +74,23 @@ public class Controller
 		
 		Collection<Position> startPositions = new ArrayList<Position>();
 		startPositions.add(new Position(0,0));
-		startPositions.add(new Position(7,0));
+		//startPositions.add(new Position(7,0));
 
 		
 		Collection<Position> exitPositions = new ArrayList<Position>();
 		exitPositions.add(new Position(7,7));
-		exitPositions.add(new Position(0,7));	
+		//exitPositions.add(new Position(0,7));	
 		
-        IGrid grid = gridFactory.Construct(8, 8, startPositions, exitPositions, specialFaces, decorationSpecifications);
+        IGrid grid = null;
+		try 
+		{
+			grid = gridFactory.Construct(8, 8, startPositions, exitPositions, specialFaces, decorationSpecifications);
+		}
+		catch (InvalidGridException e) 
+		{
+			System.out.println(e.getMessage());
+			System.exit(-1);
+		}
         
 		Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());

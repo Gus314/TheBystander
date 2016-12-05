@@ -17,8 +17,6 @@ import bystander.graphs.interfaces.IVertex;
 
 public class Grid implements IGrid 
 {
-    private int numRows = 0;
-    private int numColumns = 0;
     private IVertex[][] vertices;
     private Collection<IEdge> edges;
     private Collection<IFace> faces;
@@ -35,19 +33,8 @@ public class Grid implements IGrid
     {
         edges = new ArrayList<IEdge>();
         faces = new ArrayList<IFace>();
-        this.numRows = numRows;
-        this.numColumns = numColumns;
         vertices = new Vertex[numRows][numColumns];
     }
-
-	@SuppressWarnings("unused")
-	private boolean isConsistent()
-	{
-		// TODO: This isn't currently used but will be important when creating different puzzles is possible.
-		// A planar graph should always have Euler characteristic 2 (vertices - edges + faces). This could
-		// be extended if hyperbolic and other surfaces are eventually allowed.
-		return (numRows*numColumns - edges.size()/2 + faces.size()) == 2; // (use edges / 2 as the graph is directed.);
-	}
 	
 	public void addFace(IFace face)
 	{
@@ -107,7 +94,9 @@ public class Grid implements IGrid
     
     public boolean isOnBoundary(IVertex vertex)
     {
-    	return edgesWithVertex(vertex).size() < 8;
+    	// This only works for rectangular puzzles.
+    	int edgesAwayFromBoundary = ((IFace[])faces.toArray())[0].getVertices().size() * 2;
+    	return edgesWithVertex(vertex).size() < edgesAwayFromBoundary;
     }
          
     private ICycle completeAreaPath(IPath subPath, IPath masterPath) throws InvalidPathException
@@ -115,7 +104,6 @@ public class Grid implements IGrid
     	ICycle result = new Cycle(subPath);
     	// Take in a path and sub-path, then move along the boundary in the direction not taken by the larger path to
     	// determine the area spanned by the sub-path.
-    	// TODO: Add conditions to check as it sounds like a lot could go wrong here.
     	IVertex finalSharedVertex = result.getVertices().get(result.getVertices().size()-1);
     	IEdge latestEdge = null;
     	for(IEdge e: edgesWithVertex(finalSharedVertex))
@@ -138,7 +126,7 @@ public class Grid implements IGrid
     	{
     		// Find next edge to use.
     		for(IEdge edge: edgesWithVertex(currentVertex))
-    		{	// TODO: Create functions edgesWithSourceVertex and edgesWithTargetVertex.
+    		{
     			if(edge.getSource() == currentVertex)
     			{
     				if(isOnBoundary(edge.getTarget()) && !result.getVertices().contains(edge.getTarget()))
@@ -150,7 +138,8 @@ public class Grid implements IGrid
     			}
     		}
     		if(currentVertex == latestEdge.getTarget())
-    		{ // TODO: Massive hack!
+    		{ 
+    			// If no movement happens, the area is complete.
     			return result;
     		}
     		
@@ -173,9 +162,12 @@ public class Grid implements IGrid
     	return result;    	
     }
     
-    public IArea areaSpannedByCompletePath(IPath path)
+    private IArea areaSpannedByCompletePath(IPath path) throws InvalidPathException
     {
-    	// TODO: Check path is complete.
+    	if(!path.isComplete())
+    	{
+    		throw new InvalidPathException("Cannot determine area of an incomplete path.");
+    	}
     	IArea result = new Area();
     	Collection<IVertex> areaVertices = new ArrayList<IVertex>();
     	areaVertices.addAll(path.getVertices());
@@ -205,7 +197,6 @@ public class Grid implements IGrid
     
     private boolean addEnclosedFaces(Collection<IVertex> areaVertices, IArea area)
     {
-    	// If an area contains all but one of the vertices of a face, it must contain that face. (TODO: Does this work for non-rectangular grids?)
     	boolean change = false;
     	
     	for(IFace face: faces)
@@ -248,7 +239,6 @@ public class Grid implements IGrid
     	}
     	if(!path.isComplete())
     	{
-    		// TODO: Could it save time to do this with incomplete paths?
     		return areas;
     	}
     	

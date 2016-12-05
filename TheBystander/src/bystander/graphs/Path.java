@@ -13,14 +13,15 @@ import bystander.graphs.interfaces.IVertex;
 
 public class Path implements IPath, Serializable
 {
-	// TODO: Make getEdges() private to prevent getEdges().add producing an impossible path.	
+	// TODO: Design flaw - edges could be added via getEdges.	
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<IEdge> edges = new ArrayList<IEdge>();
     private List<IVertex> vertices = new ArrayList<IVertex>();
-        
+    private boolean isMasterPath; // The master path can only begin at a start vertex.
+    
     public List<IEdge> getEdges() {
 		return edges;
 	}
@@ -29,13 +30,15 @@ public class Path implements IPath, Serializable
 		return vertices;
 	}
 
-	public Path()
+	public Path(boolean isMasterPath)
     {
-        ;
+        this.isMasterPath = isMasterPath;
     }
 
-    public Path(IPath subPath)
+    public Path(IPath subPath, boolean isMasterPath)
     {
+    	this.isMasterPath = isMasterPath;
+    	
         for(IEdge edge:subPath.getEdges())
         {
             edges.add(edge);
@@ -87,12 +90,12 @@ public class Path implements IPath, Serializable
 
         if(edges.size() == 0)
         {
-            /*if(edge.getSource().getStartOrExit() != StartOrExit.START)
-            {   // This is true when constructing the master path but not when checking areas.
-            // TODO: Tidy this.
+            if(isMasterPath && edge.getSource().getStartOrExit() != StartOrExit.START)
+            {   
+            	// This is true when constructing the master path but not when checking areas.
                 throw new InvalidPathException("Path can only begin at start vertex.");
             }
-            else*/
+            else
             {
             	vertices.add(edge.getSource()); // Starting vertex.
                 vertices.add(edge.getTarget());
@@ -120,7 +123,7 @@ public class Path implements IPath, Serializable
     
     public IPath subPath(IVertex start, IVertex end) throws InvalidPathException // Return the subpath from start to end. May return the empty path.
     {
-    	IPath result = new Path();
+    	IPath result = new Path(false);
     	boolean foundStart = false;
     	
     	for(IEdge e: this.getEdges())

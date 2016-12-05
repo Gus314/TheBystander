@@ -14,13 +14,13 @@ import bystander.graphs.interfaces.IVertex;
 
 public class PathFinder implements IPathFinder
 {
+	private static final int pathLimit = 1000; // Maximum number of paths, to prevent long execution times.
 	private boolean kill;
 	
     private void tryPath(IVertex currentVertex, IGrid grid, IPath p, Collection<IPath> results)
     {
-    	if(results.size() == 1000000)
+    	if(results.size() >= pathLimit)
     	{
-    		// TODO: Temporary restriction.
     		kill = true;
     	}
     	
@@ -48,7 +48,7 @@ public class PathFinder implements IPathFinder
             IEdge edge = currentEdges.get(i);
             if (p.canAddEdge(edge))
             {
-                IPath newPath = new Path(p);
+                IPath newPath = new Path(p, true);
                 
                 try 
                 {
@@ -73,23 +73,28 @@ public class PathFinder implements IPathFinder
 
     public Collection<IPath> findPaths(IGrid grid)
     {
-        IVertex currentVertex = null;
-        // TODO: Modify this for multiple start vertices.
+        Collection<IVertex> startVertices = new ArrayList<IVertex>();
         for(IVertex[] vArray: grid.getVertices())
         {
             for(IVertex v : vArray)
             {
                 if(v.getStartOrExit() == StartOrExit.START)
                 {
-                    currentVertex = v;
+                	startVertices.add(v);
                 }
             }	
         }
 
-        IPath attempt = new Path();
-        kill = false;
-        Collection<IPath> completePaths = new ArrayList<IPath>();
-        tryPath(currentVertex, grid, attempt, completePaths);
-        return completePaths;
+        Collection<IPath> allCompletePaths = new ArrayList<IPath>();
+        for(IVertex startVertex: startVertices)
+        {
+            IPath attempt = new Path(true);
+            kill = false;
+            Collection<IPath> completePaths = new ArrayList<IPath>();
+            tryPath(startVertex, grid, attempt, completePaths);
+            allCompletePaths.addAll(completePaths);
+
+        }
+        return allCompletePaths;
     }
 }

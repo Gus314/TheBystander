@@ -17,23 +17,25 @@ public class Cycle extends Path implements ICycle
 	
 	public Cycle(IPath path)
 	{
+		super(false); // A cycle cannot be part of the master path.
 		completed = false;
 		for(IEdge edge: path.getEdges())
 		{
 			try 
 			{
 				addEdge(edge);
-			} catch (InvalidPathException e) 
+			}
+			catch (InvalidPathException e) 
 			{
-				// Can't happen as the previous path was valid. Should do something anyway just in-case, later.
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// Can't happen as the previous path was valid.
+				System.out.println("Unexpected behaviour, copy of valid path was considered invalid.");				
 			}
 		}
 	}
 	
 	public Cycle()
 	{
+		super(false); // A cycle cannot be part of the master path.
 		completed = false;
 	}
 	
@@ -51,18 +53,10 @@ public class Cycle extends Path implements ICycle
 
         if(getEdges().size() == 0)
         {
-            /*if(edge.getSource().getStartOrExit() != StartOrExit.START)
-            {   // This is true when constructing the master path but not when checking areas.
-            // TODO: Tidy this.
-                throw new InvalidPathException("Path can only begin at start vertex.");
-            }
-            else*/
-            {
-            	getVertices().add(edge.getSource()); // Starting vertex.
-            	getVertices().add(edge.getTarget());
-            	getEdges().add(edge);
-                return;
-            }
+            getVertices().add(edge.getSource()); // Starting vertex.
+            getVertices().add(edge.getTarget());
+            getEdges().add(edge);
+            return;
         }
 
         if (getEdges().get(getEdges().size()-1).getTarget().getStartOrExit() == StartOrExit.EXIT)

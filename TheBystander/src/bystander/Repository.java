@@ -18,54 +18,58 @@ public class Repository
 	{
         FileOutputStream fos;
         ObjectOutputStream oos;
+        String filePath = "areas";
 		try 
 		{
-			fos = new FileOutputStream("areas");
+			fos = new FileOutputStream(filePath);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(data);
 			oos.close();
 		}
 		catch (FileNotFoundException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Unable to open file for writing : " + filePath);
 		}
-			catch (IOException e1)
+		catch (IOException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Unable to write file : " + filePath);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Map<IPath, Collection<IArea>> readData()
 	{
+		String filePath = "areas";
 		Map<IPath, Collection<IArea>> result = null;
         FileInputStream fis;
         ObjectInputStream ois;
 		try 
 		{
-			fis = new FileInputStream("areas");
+			fis = new FileInputStream(filePath);
 			ois = new ObjectInputStream(fis);
 			try 
 			{
-				result =  (Map<IPath, Collection<IArea>>) ois.readObject();
+				Object readResult = ois.readObject();;
+				if(readResult instanceof Map<?,?>)
+				{
+					result =  (Map<IPath, Collection<IArea>>) readResult;
+				}
+
 				ois.close();
 			} 
 			catch (ClassNotFoundException e)
 			{
-				// TODO Auto-generated catch block
+				System.out.println("Unable to load file: " + filePath);
 				e.printStackTrace();
 			}
 		}
 		catch (FileNotFoundException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Unable to load file: " + filePath);
 		}
 			catch (IOException e1)
 		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Unable to load file: " + filePath);
 		}
 		return result;
 	}
