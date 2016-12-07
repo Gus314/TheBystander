@@ -4,6 +4,7 @@ import main.graphs.faces.Face;
 import main.graphs.faces.interfaces.IFace;
 import main.graphs.grids.IGrid;
 import main.ui.Interfaces.IGridDrawer;
+import main.ui.Interfaces.ObjectToImageMapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,11 +22,7 @@ public class GridDrawer implements IGridDrawer {
     private ImageIcon edgeHorizontalBlank;
     private ImageIcon edgeMiddleBlank;
     private ImageIcon faceBlank;
-    private ImageIcon faceSquareBlack;
-    private ImageIcon faceSquareWhite;
-    private ImageIcon faceSquareRed;
-    private ImageIcon faceSquareBlue;
-    private ImageIcon faceSquareGreen;
+    private ImageIcon exitRight;
 
     private IGrid grid;
 
@@ -35,11 +32,7 @@ public class GridDrawer implements IGridDrawer {
         edgeHorizontalBlank = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "edge_horizontal_blank.png");
         edgeMiddleBlank = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "edge_middle_blank.png");
         faceBlank = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_blank.png");
-        faceSquareBlack = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_square_black.png");
-        faceSquareWhite = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_square_white.png");
-        faceSquareRed = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_square_red.png");
-        faceSquareBlue = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_square_blue.png");
-        faceSquareGreen = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "face_square_green.png");
+        exitRight = new ImageIcon(UI_RESOURCES_IMAGE_PATH_PREFIX + "exit_right.png");
 
         this.grid = grid;
     }
@@ -50,29 +43,35 @@ public class GridDrawer implements IGridDrawer {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        Collection<IFace> facesOfInterest = getFacesofInterest();
+        Collection<IFace> specialFaces = getSpecialFaces();
 
         int xPos = 0;
         int yPos = 0;
 
         //TODO pull this from grid object
-        int columns = 5;
-        int rows = 5;
+        int columns = 7;
+        int rows = 7;
 
         //DRAW FIRST HORIZONTAL EDGE AT TOP OF GRID
         drawFullHorizontalEdge(yPos, columns, panel, c);
 
         yPos++;
         //DRAWS FACES AND VERTICAL EDGES
-        for (int y = 0; y < rows; y++) {
+        for (int row = 0; row < rows; row++) {
             //DRAWS LEFTMOST EDGE
             xPos = 0;
             addImageToPanel(this.edgeVerticalBlank, xPos, yPos, panel, c);
             xPos++;
-            for (int x = 0; x < columns; x++) {
+            for (int column = 0; column < columns; column++) {
                 // DRAWS FACE RIGHT EDGE, FACE, RIGHT EDGE ETC UNTIL END OF ROW
-                addImageToPanel(this.faceBlank, xPos, yPos, panel, c);
-                System.out.println("FACE POSITION IS (" + x + "," + y + ")");
+                IFace specialFace = getSpecialFaceAtVertex(specialFaces, column, row);
+                if (specialFace != null) {
+                    addImageToPanel(ObjectToImageMapper.getImageForFace(specialFace), xPos, yPos, panel, c);
+                }
+                else {
+                    addImageToPanel(this.faceBlank, xPos, yPos, panel, c);
+                }
+                System.out.println("FACE POSITION IS (" + column + "," + row + ")");
                 xPos++;
                 addImageToPanel(this.edgeVerticalBlank, xPos, yPos, panel, c);
                 xPos++;
@@ -80,6 +79,7 @@ public class GridDrawer implements IGridDrawer {
             //DRAWS LOWER HORIZONTAL EDGE
             yPos++;
             drawFullHorizontalEdge(yPos, columns, panel, c);
+            addImageToPanel(this.exitRight, xPos, yPos, panel, c);
             yPos++;
         }
 
@@ -113,15 +113,22 @@ public class GridDrawer implements IGridDrawer {
         frame.setVisible(true);
     }
 
-    private Collection<IFace> getFacesofInterest() {
+    private Collection<IFace> getSpecialFaces() {
         Collection<IFace> faces = new ArrayList<IFace>();
         this.grid.getFaces().stream().forEach( face ->{
-            System.out.println(face.getClass().getSimpleName());
-            System.out.println(Face.class.getSimpleName());
             if (!face.getClass().getSimpleName().equals(Face.class.getSimpleName())) {
                 faces.add(face);
             }
         });
         return faces;
+    }
+
+    private IFace getSpecialFaceAtVertex(Collection<IFace> faces, int xPos, int yPos) {
+        for (IFace face : faces) {
+            if (face.getBottomLeftVertex().getColumn() == xPos && face.getBottomLeftVertex().getRow() == yPos) {
+                return face;
+            }
+        }
+        return null;
     }
 }
