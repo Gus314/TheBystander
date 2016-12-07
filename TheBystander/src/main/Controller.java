@@ -1,10 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import main.enums.Colour;
 import main.exceptions.InvalidGridException;
 import main.exceptions.InvalidPathException;
@@ -20,8 +15,13 @@ import main.graphs.grids.Position;
 import main.graphs.interfaces.IArea;
 import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IPathFinder;
-import main.ui.GridDrawer;
-import main.ui.Interfaces.IGridDrawer;
+import main.graphs.rules.RuleChecker;
+import main.graphs.rules.interfaces.IRuleChecker;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Controller
 {
@@ -58,7 +58,7 @@ public class Controller
         }
         return data;
 	}
-	
+
 	public static void main(String[] args)
 	{
 		IGridFactory gridFactory = new GridFactory();
@@ -92,11 +92,11 @@ public class Controller
 			System.exit(-1);
 		}
 
-        IGridDrawer gridDrawer = new GridDrawer(grid);
-        gridDrawer.drawGrid();
+        //IGridDrawer gridDrawer = new GridDrawer(grid);
+        //gridDrawer.drawGrid();
 
-        /*
-		Map<IPath, Collection<IArea>> data = retrieveData(grid);
+
+        Map<IPath, Collection<IArea>> data = retrieveData(grid);
      	System.out.println("Total number of paths being considered:" + data.keySet().size());
  		IRuleChecker ruleChecker = new RuleChecker(grid);
  		
@@ -117,7 +117,7 @@ public class Controller
      		System.out.println("Failed to find a solution.");
      	}
         System.out.println("Finished.");
-        */
-	}
+
+    }
 }
 

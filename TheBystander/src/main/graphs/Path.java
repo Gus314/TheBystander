@@ -1,15 +1,15 @@
 package main.graphs;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import main.enums.StartOrExit;
 import main.exceptions.InvalidPathException;
 import main.graphs.interfaces.IEdge;
 import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IVertex;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Gus
@@ -26,14 +26,6 @@ public class Path implements IPath, Serializable
     private List<IVertex> vertices = new ArrayList<IVertex>();
     private boolean isMasterPath; // The master path can only begin at a start vertex.
     
-    public List<IEdge> getEdges() {
-		return edges;
-	}
-
-	public List<IVertex> getVertices() {
-		return vertices;
-	}
-
 	public Path(boolean isMasterPath)
     {
         this.isMasterPath = isMasterPath;
@@ -42,7 +34,7 @@ public class Path implements IPath, Serializable
     public Path(IPath subPath, boolean isMasterPath)
     {
     	this.isMasterPath = isMasterPath;
-    	
+
         for(IEdge edge:subPath.getEdges())
         {
             edges.add(edge);
@@ -53,6 +45,14 @@ public class Path implements IPath, Serializable
             vertices.add(vertex);
         }
 
+    }
+
+    public List<IEdge> getEdges() {
+        return edges;
+    }
+
+    public List<IVertex> getVertices() {
+        return vertices;
     }
 
     public boolean isComplete()
@@ -77,12 +77,7 @@ public class Path implements IPath, Serializable
             return false;
         }
 
-        if (edges.get(edges.size()-1).getTarget() != edge.getSource())
-        {
-            return false;
-        }
-
-        return true;
+        return edges.get(edges.size() - 1).getTarget() == edge.getSource();
     }
 
     public void addEdge(IEdge edge) throws InvalidPathException
@@ -148,6 +143,11 @@ public class Path implements IPath, Serializable
     			}
     		}    		
     	}
+
+        if ((getEdges().size() > 0) && (!foundStart)) {
+            throw new InvalidPathException("Sub-path was not contained within master path.");
+        }
+
     	return result;
     }
     
