@@ -14,6 +14,7 @@ public interface IGrid
 {
 	IVertex[][] getVertices();
 	Collection<IEdge> getEdges();
+	Collection<IFace> getFaces();
     List<IEdge> edgesWithVertex(IVertex vertex, IPath path);
     void addFace(IFace face);
     void addVertex(IVertex vertex, int row, int column);

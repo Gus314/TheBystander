@@ -46,6 +46,8 @@ public class Grid implements IGrid
 		return edges;
 	}
 
+	public Collection<IFace> getFaces() { return faces; }
+
 	public Grid(int numRows, int numColumns)
     {
         edges = new ArrayList<IEdge>();

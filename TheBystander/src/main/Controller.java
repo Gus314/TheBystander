@@ -21,6 +21,7 @@ import main.graphs.interfaces.IArea;
 import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IPathFinder;
 import main.ui.GridDrawer;
+import main.ui.Interfaces.IGridDrawer;
 
 public class Controller
 {
@@ -91,7 +92,8 @@ public class Controller
 			System.exit(-1);
 		}
 
-        GridDrawer.drawGrid(grid);
+        IGridDrawer gridDrawer = new GridDrawer(grid);
+        gridDrawer.drawGrid();
 
         /*
 		Map<IPath, Collection<IArea>> data = retrieveData(grid);
