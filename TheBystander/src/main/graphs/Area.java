@@ -1,12 +1,14 @@
 package main.graphs;
 
+import main.graphs.faces.Face;
+import main.graphs.faces.interfaces.IFace;
+import main.graphs.grids.IGrid;
+import main.graphs.interfaces.IArea;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import main.graphs.faces.interfaces.IFace;
-import main.graphs.interfaces.IArea;
 
 public class Area implements IArea, Serializable
 {
@@ -59,4 +61,24 @@ public class Area implements IArea, Serializable
 			 faces.add((IFace)in.readObject());
 		 }
 	 }
+
+    public void returnSpecialFaces(IGrid grid) {
+        // TODO This method needs tidied.
+        for (IFace face : grid.getFaces()) {
+            if (face.getClass() != Face.class) // if isSpecialFace.
+            {
+                IFace removalFace = null;
+                for (IFace myFace : faces) {
+                    if (myFace.getBottomLeftVertex() == face.getBottomLeftVertex()) {
+                        removalFace = myFace;
+                        break;
+                    }
+                }
+                if (removalFace != null) {
+                    faces.remove(removalFace);
+                    faces.add(face);
+                }
+            }
+        }
+    }
 }

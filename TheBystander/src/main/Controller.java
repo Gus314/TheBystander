@@ -15,29 +15,29 @@ import main.graphs.grids.Position;
 import main.graphs.interfaces.IArea;
 import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IPathFinder;
-import main.graphs.rules.RuleChecker;
-import main.graphs.rules.interfaces.IRuleChecker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Controller
 {
-	private static Map<IPath, Collection<IArea>> retrieveData(IGrid grid)
-	{        
-        Map<IPath, Collection<IArea>> data = Repository.readData();
-        Collection<IPath> completePaths = (data == null) ? null : data.keySet();
-        if(completePaths == null)
-        {
-        	System.out.println("Could not load paths, this may take some time (approximately 20 minutes).");
+    private static List<SolverRunnable> retrieveData() {
+        // Currently assume 2-4 areas, which should cover most puzzles.
+        List<SolverRunnable> result = new ArrayList<SolverRunnable>();
+        for (int i = 2; i <= 4; i++) {
+            Map<IPath, Collection<IArea>> partial = Repository.readData(i);
+            result.add(new SolverRunnable(partial));
+        }
+
+        return result;
+    }
+
+    private static void computeData(IGrid grid) {
+        System.out.println("Could not load paths, this may take some time (approximately 20 minutes).");
         	IPathFinder pathFinder = new PathFinder();
-        	completePaths = pathFinder.findPaths(grid);
-        	data = new HashMap<IPath, Collection<IArea>>();
-        	for(IPath p: completePaths)
-            {      	
-            	/*System.out.println(p);*/
+        Collection<IPath> completePaths = pathFinder.findPaths(grid);
+        Map<IPath, Collection<IArea>> data = new HashMap<IPath, Collection<IArea>>();
+
+        	for(IPath p: completePaths) {
                 Collection<IArea> areas = new ArrayList<IArea>();
             	try 
             	{
@@ -51,73 +51,89 @@ public class Controller
             }  
         	
         	Repository.writeData(data);
+    }
+
+    private static IGrid getExample() {
+        IGridFactory gridFactory = new GridFactory();
+
+        Map<IFace, Position> specialFaces = new HashMap<IFace, Position>();
+        IFace blackFace = new SquareFace(Colour.BLACK);
+        specialFaces.put(blackFace, new Position(2, 1));
+        IFace whiteFace = new SquareFace(Colour.WHITE);
+        specialFaces.put(whiteFace, new Position(3, 4));
+        Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
+        DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());
+        decorationSpecifications.add(blackSpot);
+
+        Collection<Position> startPositions = new ArrayList<Position>();
+        startPositions.add(new Position(0, 0));
+        //startPositions.add(new Position(7,0));
+
+
+        Collection<Position> exitPositions = new ArrayList<Position>();
+        exitPositions.add(new Position(5, 5));
+        //exitPositions.add(new Position(0,7));
+
+        IGrid grid = null;
+        try {
+            grid = gridFactory.Construct(6, 6, startPositions, exitPositions, specialFaces, decorationSpecifications);
+        } catch (InvalidGridException e) {
+            System.out.println(e.getMessage());
+            System.exit(-1);
         }
-        else
-        {
-        	System.out.println("Successfully loaded paths.");
+
+        return grid;
+    }
+
+    private static void solvePuzzle(IGrid grid) {
+        List<SolverRunnable> solvers = retrieveData();
+        List<Thread> solverThreads = new ArrayList<Thread>();
+        for (SolverRunnable solver : solvers) {
+            solver.setGrid(grid);
+            Thread solverThread = new Thread(solver);
+            solverThreads.add(solverThread);
+            solverThread.run();
         }
-        return data;
-	}
+        int threadCount = solverThreads.size();
+        int finishedCount = 0;
+        IPath solution = null;
+
+        while ((finishedCount < threadCount) && (solution == null)) {
+            finishedCount = 0;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < solverThreads.size(); i++) {
+                if (!solverThreads.get(i).isAlive()) {
+                    if (solvers.get(i).getResult() != null) {
+                        solution = solvers.get(i).getResult();
+                        break;
+                    }
+                    finishedCount++;
+                }
+            }
+        }
+
+        if (solution != null) {
+            System.out.println("Solution found.");
+            System.out.println(solution);
+        } else {
+            System.out.println("Failed to find solution.");
+        }
+    }
 
 	public static void main(String[] args)
 	{
-		IGridFactory gridFactory = new GridFactory();
-		
-		Map<IFace, Position> specialFaces = new HashMap<IFace, Position>();
-		IFace blackFace = new SquareFace(Colour.BLACK);
-		specialFaces.put(blackFace, new Position(2, 1));
-		IFace whiteFace = new SquareFace(Colour.WHITE);
-		specialFaces.put(whiteFace, new Position(3,4));
-		Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
-		DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());
-		decorationSpecifications.add(blackSpot);	
-		
-		Collection<Position> startPositions = new ArrayList<Position>();
-		startPositions.add(new Position(0,0));
-		//startPositions.add(new Position(7,0));
-
-		
-		Collection<Position> exitPositions = new ArrayList<Position>();
-		exitPositions.add(new Position(7,7));
-		//exitPositions.add(new Position(0,7));	
-		
-        IGrid grid = null;
-		try 
-		{
-			grid = gridFactory.Construct(8, 8, startPositions, exitPositions, specialFaces, decorationSpecifications);
-		}
-		catch (InvalidGridException e) 
-		{
-			System.out.println(e.getMessage());
-			System.exit(-1);
-		}
+        // This class now requires considerable refactoring but is currently experimental.
+        IGrid grid = getExample();
 
         //IGridDrawer gridDrawer = new GridDrawer(grid);
         //gridDrawer.drawGrid();
 
-
-        Map<IPath, Collection<IArea>> data = retrieveData(grid);
-     	System.out.println("Total number of paths being considered:" + data.keySet().size());
- 		IRuleChecker ruleChecker = new RuleChecker(grid);
- 		
- 		boolean succeeded = false;
-     	for(IPath path: data.keySet())
-     	{
-     		if(ruleChecker.isSolution(data.get(path), path))
-     		{
-     			succeeded = true;
-     			System.out.println("Solved.");
-     			System.out.println(path);
-     			break;
-     		}
-     	}
-     	
-     	if(!succeeded)
-     	{
-     		System.out.println("Failed to find a solution.");
-     	}
-        System.out.println("Finished.");
-
+        //computeData(grid); // Comment out either this or solvePuzzle.
+        solvePuzzle(grid);
     }
 }
 

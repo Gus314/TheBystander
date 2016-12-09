@@ -1,9 +1,5 @@
 package main.graphs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import main.enums.StartOrExit;
 import main.exceptions.InvalidPathException;
 import main.graphs.grids.IGrid;
@@ -12,11 +8,15 @@ import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IPathFinder;
 import main.graphs.interfaces.IVertex;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class PathFinder implements IPathFinder
 {
-	private static final int pathLimit = 1000; // Maximum number of paths, to prevent long execution times.
-	private boolean kill;
-	
+    private int pathLimit = 10000000; // Maximum number of paths, to prevent long execution times.
+    private boolean kill;
+
     private void tryPath(IVertex currentVertex, IGrid grid, IPath p, Collection<IPath> results)
     {
     	if(results.size() >= pathLimit)
