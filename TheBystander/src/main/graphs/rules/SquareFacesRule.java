@@ -1,15 +1,16 @@
 package main.graphs.rules;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import main.enums.Colour;
+import main.graphs.AreaHelpers;
 import main.graphs.faces.interfaces.IColouredFace;
 import main.graphs.faces.interfaces.IFace;
 import main.graphs.grids.IGrid;
 import main.graphs.interfaces.IArea;
 import main.graphs.interfaces.IPath;
 import main.graphs.rules.interfaces.IRule;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Gus
@@ -19,11 +20,13 @@ public class SquareFacesRule implements IRule
 {
 	public int ruleFailures(Collection<IArea> areas, IPath path, IGrid grid)
 	{
-		int result = 0;
-		
+        boolean pass = true;
+        int totalSquares = 0;
+
 		for(IArea area: areas)
 		{
-			Collection<Colour> coloursInArea = new ArrayList<Colour>();
+            totalSquares += AreaHelpers.getSquareFaces(area).size();
+            Collection<Colour> coloursInArea = new ArrayList<Colour>();
 			for(IFace face: area.getFaces())
 			{
 				if(face instanceof IColouredFace)
@@ -35,11 +38,12 @@ public class SquareFacesRule implements IRule
 					}
 					else if(!coloursInArea.contains(colouredFace.getColour()))
 					{ // Encountered a second coloured face in an area.
-				      result++;
-					}
+                        pass = false;
+                        break;
+                    }
 				}
 			}
 		}
-		return result;
-	}
+        return pass ? 0 : totalSquares;
+    }
 }

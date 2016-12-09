@@ -1,9 +1,5 @@
 package main.graphs.grids;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-
 import main.enums.StartOrExit;
 import main.exceptions.InvalidGridException;
 import main.graphs.DecorationSpecification;
@@ -14,14 +10,17 @@ import main.graphs.faces.interfaces.IFace;
 import main.graphs.interfaces.IEdge;
 import main.graphs.interfaces.IVertex;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
 public class GridFactory implements IGridFactory
 {
 	private static void decorateEdge(IEdge edge, IVertex source, IVertex target, Collection<DecorationSpecification> decorationSpecifications)
 	{
         for(DecorationSpecification decorationSpecification: decorationSpecifications)
         {
-        	if(decorationSpecification.getSource() == source && decorationSpecification.getTarget() == target)
-        	{
+            if (decorationSpecification.getSource().equals(source) && decorationSpecification.getTarget().equals(target)) {
         		edge.getDecorations().add(decorationSpecification.getDecoration());
         	}
         }

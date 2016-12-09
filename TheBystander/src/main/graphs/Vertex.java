@@ -1,11 +1,11 @@
 package main.graphs;
 
+import main.enums.StartOrExit;
 import main.graphs.grids.Position;
 import main.graphs.interfaces.IVertex;
+
 import java.io.IOException;
 import java.io.Serializable;
-
-import main.enums.StartOrExit;
 
 public class Vertex implements IVertex, Serializable
 {
@@ -13,6 +13,22 @@ public class Vertex implements IVertex, Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private StartOrExit startOrExit;
+    private int row;
+    private int column;
+
+	public Vertex(int row, int column)
+    {
+        this.row = row;
+        this.column = column;
+    }
+
+    public Vertex(int row, int column, StartOrExit startOrExit)
+    {
+        this.row = row;
+        this.column = column;
+        this.startOrExit = startOrExit;
+    }
 
 	public StartOrExit getStartOrExit() {
 		return startOrExit;
@@ -25,30 +41,12 @@ public class Vertex implements IVertex, Serializable
 	public int getColumn() {
 		return column;
 	}
-	
-	public Position getPosition()
-	{
+
+	public Position getPosition() {
 		return new Position(row, column);
 	}
 
-	private StartOrExit startOrExit;
-    private int row;
-    private int column;
-    
-    public Vertex(int row, int column)
-    {
-        this.row = row;
-        this.column = column;
-    }
-
-    public Vertex(int row, int column, StartOrExit startOrExit)
-    {
-        this.row = row;
-        this.column = column;
-        this.startOrExit = startOrExit;
-    }
-    
-    public String toString()
+	public String toString()
     {
     	return "(" + row + "," + column + ")";
     }
@@ -66,4 +64,20 @@ public class Vertex implements IVertex, Serializable
 		 column = in.readInt();
 		 startOrExit = StartOrExit.valueOf(in.readUTF());
 	 }
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+
+		if (!(other instanceof IVertex)) {
+			return false;
+		}
+
+		Vertex otherVertex = (Vertex) other;
+		return ((otherVertex.getRow() == row) &&
+				(otherVertex.getColumn() == getColumn()) &&
+				(otherVertex.getStartOrExit() == startOrExit));
+	}
 }
