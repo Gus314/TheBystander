@@ -66,24 +66,15 @@ public class Controller
         return grid;
     }
 
-    private static IEdge startExample(IGrid grid) {
-        IVertex vertex = null;
+    private static IVertex startExample(IGrid grid) {
         IVertex[][] vertices = grid.getVertices();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 if (StartOrExit.START == vertices[i][j].getStartOrExit()) {
-                    vertex = vertices[i][j];
-                    break;
+                    return vertices[i][j];
                 }
             }
         }
-
-        for (IEdge edge : grid.getEdges()) {
-            if (vertex == edge.getSource()) {
-                return edge;
-            }
-        }
-
         return null;
     }
 

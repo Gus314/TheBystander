@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IPath
 {
+    boolean start(IVertex vertex);
     boolean isComplete();
     boolean canAddEdge(IEdge edge);
     void addEdge(IEdge edge) throws InvalidPathException;

@@ -19,7 +19,7 @@ public interface IGameManager {
 
     boolean canStart(IVertex v);
 
-    boolean start(IEdge edge);
+    boolean start(IVertex vertex);
 
     boolean removeLastEdge();
 

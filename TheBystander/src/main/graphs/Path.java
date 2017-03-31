@@ -40,6 +40,15 @@ public class Path implements IPath, Serializable
         return vertices;
     }
 
+    public boolean start(IVertex vertex) {
+        if ((vertices.size() == 0) && (StartOrExit.START == vertex.getStartOrExit())) {
+            vertices.add(vertex);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean isComplete()
     {
         return (edges.size() > 0) && (edges.get(edges.size()-1).getTarget().getStartOrExit() == StartOrExit.EXIT);
@@ -74,14 +83,15 @@ public class Path implements IPath, Serializable
 
         if(edges.size() == 0)
         {
-            if(isMasterPath && edge.getSource().getStartOrExit() != StartOrExit.START)
+
+            if ((vertices.size() == 0) || (isMasterPath && edge.getSource() != vertices.get(0)))
             {   
             	// This is true when constructing the master path but not when checking areas.
                 throw new InvalidPathException("Path can only begin at start vertex.");
             }
             else
             {
-            	vertices.add(edge.getSource()); // Starting vertex.
+                // Starting vertex already added.
                 vertices.add(edge.getTarget());
                 edges.add(edge);
                 return;

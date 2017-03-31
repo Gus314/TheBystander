@@ -47,14 +47,9 @@ public class GameManager implements IGameManager {
         return (StartOrExit.START == v.getStartOrExit());
     }
 
-    public boolean start(IEdge edge) {
-        if ((path.getVertices().size() == 0) && (StartOrExit.START == edge.getSource().getStartOrExit())) {
-            try {
-                path.addEdge(edge);
-            } catch (InvalidPathException e) {
-                return false;
-            }
-            return true;
+    public boolean start(IVertex vertex) {
+        if ((path.getVertices().size() == 0)) {
+            return path.start(vertex);
         } else {
             return false;
         }
