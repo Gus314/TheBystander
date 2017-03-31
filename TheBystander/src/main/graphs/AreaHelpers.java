@@ -1,8 +1,6 @@
 package main.graphs;
 
-import main.graphs.faces.interfaces.IFace;
-import main.graphs.faces.interfaces.ISquareFace;
-import main.graphs.faces.interfaces.IStarFace;
+import main.graphs.faces.interfaces.*;
 import main.graphs.interfaces.IArea;
 
 import java.util.ArrayList;
@@ -25,12 +23,36 @@ public class AreaHelpers {
         return result;
     }
 
-    public static Collection<ISquareFace> getSquareFaces(IArea area) {
-        Collection<ISquareFace> result = new ArrayList<ISquareFace>();
+    public static Collection<IColouredFace> getColouredFaces(IArea area) {
+        Collection<IColouredFace> result = new ArrayList<IColouredFace>();
 
         for (IFace face : area.getFaces()) {
-            if (face instanceof ISquareFace) {
-                result.add((ISquareFace) face);
+            if (face instanceof IColouredFace) {
+                result.add((IColouredFace) face);
+            }
+        }
+
+        return result;
+    }
+
+    public static Collection<ITetrominoFace> getTetrominoFaces(IArea area) {
+        Collection<ITetrominoFace> result = new ArrayList<ITetrominoFace>();
+
+        for (IFace face : area.getFaces()) {
+            if (face instanceof ITetrominoFace) {
+                result.add((ITetrominoFace) face);
+            }
+        }
+
+        return result;
+    }
+
+    public static Collection<IBlueBlocksFace> getBlueBlocksFaces(IArea area) {
+        Collection<IBlueBlocksFace> result = new ArrayList<IBlueBlocksFace>();
+
+        for (IFace face : area.getFaces()) {
+            if (face instanceof IBlueBlocksFace) {
+                result.add((IBlueBlocksFace) face);
             }
         }
 

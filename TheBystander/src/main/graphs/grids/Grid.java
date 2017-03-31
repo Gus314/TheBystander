@@ -1,19 +1,15 @@
 package main.graphs.grids;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import main.exceptions.InvalidPathException;
 import main.graphs.Area;
 import main.graphs.Cycle;
 import main.graphs.Vertex;
 import main.graphs.faces.interfaces.IFace;
-import main.graphs.interfaces.IArea;
-import main.graphs.interfaces.ICycle;
-import main.graphs.interfaces.IEdge;
-import main.graphs.interfaces.IPath;
-import main.graphs.interfaces.IVertex;
+import main.graphs.interfaces.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Gus
@@ -27,8 +23,16 @@ public class Grid implements IGrid
     private Collection<IFace> faces;
     private int rows;
     private int columns;
-    
-    public int getRows()
+
+	public Grid(int numRows, int numColumns) {
+		edges = new ArrayList<IEdge>();
+		faces = new ArrayList<IFace>();
+		vertices = new Vertex[numRows][numColumns];
+		this.rows = numRows;
+		this.columns = numColumns;
+	}
+
+	public int getRows()
     {
     	return rows;
     }
@@ -37,7 +41,7 @@ public class Grid implements IGrid
     {
     	return columns;
     }
-    
+
     public IVertex[][] getVertices() {
 		return vertices;
 	}
@@ -48,15 +52,6 @@ public class Grid implements IGrid
 
 	public Collection<IFace> getFaces() { return faces; }
 
-	public Grid(int numRows, int numColumns)
-    {
-        edges = new ArrayList<IEdge>();
-        faces = new ArrayList<IFace>();
-        vertices = new Vertex[numRows][numColumns];
-        this.rows = numRows;
-        this.columns = numColumns;
-    }
-	
 	public void addFace(IFace face)
 	{
 		faces.add(face);
@@ -318,4 +313,6 @@ public class Grid implements IGrid
     	
     	return areas;    	
     }
+
+
 }

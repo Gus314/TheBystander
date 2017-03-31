@@ -1,13 +1,13 @@
 package main.graphs;
 
+import main.graphs.interfaces.IDecoration;
+import main.graphs.interfaces.IEdge;
+import main.graphs.interfaces.IVertex;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import main.graphs.interfaces.IDecoration;
-import main.graphs.interfaces.IEdge;
-import main.graphs.interfaces.IVertex;
 
 public class Edge implements IEdge, Serializable 
 {
@@ -16,6 +16,14 @@ public class Edge implements IEdge, Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	private IVertex source;
+	private IVertex target;
+	private Collection<IDecoration> decorations = new ArrayList<IDecoration>();
+
+	public Edge(IVertex source, IVertex target) {
+		this.source = source;
+		this.target = target;
+	}
+
 	public IVertex getSource() {
 		return source;
 	}
@@ -29,15 +37,30 @@ public class Edge implements IEdge, Serializable
 		return decorations;
 	}
 
-	private IVertex target;
-	private Collection<IDecoration> decorations = new ArrayList<IDecoration>();
+	public boolean isLeft(IVertex vertex) {
+		return source.getColumn() < vertex.getColumn();
+	}
 
-    public Edge(IVertex source, IVertex target)
-    {
-        this.source = source;
-        this.target = target;
-    }
-    
+	public boolean isRight(IVertex vertex) {
+		return source.getColumn() > vertex.getColumn();
+	}
+
+	public boolean isUp(IVertex vertex) {
+		return source.getRow() < vertex.getRow();
+	}
+
+	public boolean isDown(IVertex vertex) {
+		return source.getRow() < vertex.getRow();
+	}
+
+	public boolean isHorizontallyAligned(IVertex vertex) {
+		return !(isLeft(vertex) || isRight(vertex));
+	}
+
+	public boolean isVerticallyAligned(IVertex vertex) {
+		return !(isUp(vertex) || isDown(vertex));
+	}
+
 	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
 	 {
 		 out.writeObject(source);

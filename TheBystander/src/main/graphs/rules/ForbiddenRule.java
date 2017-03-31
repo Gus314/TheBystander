@@ -1,7 +1,5 @@
 package main.graphs.rules;
 
-import java.util.Collection;
-
 import main.graphs.decorations.Forbidden;
 import main.graphs.grids.IGrid;
 import main.graphs.interfaces.IArea;
@@ -16,8 +14,7 @@ import main.graphs.rules.interfaces.IRule;
  */
 public class ForbiddenRule implements IRule
 {
-	public int ruleFailures(Collection<IArea> areas, IPath path, IGrid grid)
-	{
+    public int ruleFailures(IArea area, IPath path, IGrid grid) {
 		int result = 0;
 		for(IEdge edge: grid.getEdges())
 		{

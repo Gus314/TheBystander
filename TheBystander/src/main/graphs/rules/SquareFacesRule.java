@@ -18,30 +18,21 @@ import java.util.Collection;
  */
 public class SquareFacesRule implements IRule
 {
-	public int ruleFailures(Collection<IArea> areas, IPath path, IGrid grid)
-	{
+    public int ruleFailures(IArea area, IPath path, IGrid grid) {
         boolean pass = true;
         int totalSquares = 0;
 
-		for(IArea area: areas)
-		{
-            totalSquares += AreaHelpers.getSquareFaces(area).size();
-            Collection<Colour> coloursInArea = new ArrayList<Colour>();
-			for(IFace face: area.getFaces())
-			{
-				if(face instanceof IColouredFace)
-				{
-					IColouredFace colouredFace = (IColouredFace)face;
-					if(coloursInArea.size() == 0)
-					{
-						coloursInArea.add(colouredFace.getColour());
-					}
-					else if(!coloursInArea.contains(colouredFace.getColour()))
-					{ // Encountered a second coloured face in an area.
-                        pass = false;
-                        break;
-                    }
-				}
+        totalSquares += AreaHelpers.getColouredFaces(area).size();
+        Collection<Colour> coloursInArea = new ArrayList<Colour>();
+        for (IFace face : area.getFaces()) {
+            if (face instanceof IColouredFace) {
+                IColouredFace colouredFace = (IColouredFace) face;
+                if (coloursInArea.size() == 0) {
+                    coloursInArea.add(colouredFace.getColour());
+                } else if (!coloursInArea.contains(colouredFace.getColour())) { // Encountered a second coloured face in an area.
+                    pass = false;
+                    break;
+                }
 			}
 		}
         return pass ? 0 : totalSquares;

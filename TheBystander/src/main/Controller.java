@@ -1,58 +1,31 @@
 package main;
 
+import main.control.GameManager;
+import main.control.interfaces.IGameManager;
 import main.enums.Colour;
+import main.enums.StartOrExit;
+import main.exceptions.InvalidEdgeException;
 import main.exceptions.InvalidGridException;
 import main.exceptions.InvalidPathException;
 import main.graphs.DecorationSpecification;
-import main.graphs.PathFinder;
 import main.graphs.decorations.Mandatory;
 import main.graphs.faces.SquareFace;
+import main.graphs.faces.StarFace;
 import main.graphs.faces.interfaces.IFace;
 import main.graphs.grids.GridFactory;
 import main.graphs.grids.IGrid;
 import main.graphs.grids.IGridFactory;
 import main.graphs.grids.Position;
-import main.graphs.interfaces.IArea;
-import main.graphs.interfaces.IPath;
-import main.graphs.interfaces.IPathFinder;
+import main.graphs.interfaces.IEdge;
+import main.graphs.interfaces.IVertex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Controller
 {
-    private static List<SolverRunnable> retrieveData() {
-        // Currently assume 2-4 areas, which should cover most puzzles.
-        List<SolverRunnable> result = new ArrayList<SolverRunnable>();
-        for (int i = 2; i <= 4; i++) {
-            Map<IPath, Collection<IArea>> partial = Repository.readData(i);
-            result.add(new SolverRunnable(partial));
-        }
-
-        return result;
-    }
-
-    private static void computeData(IGrid grid) {
-        System.out.println("Could not load paths, this may take some time (approximately 20 minutes).");
-        	IPathFinder pathFinder = new PathFinder();
-        Collection<IPath> completePaths = pathFinder.findPaths(grid);
-        Map<IPath, Collection<IArea>> data = new HashMap<IPath, Collection<IArea>>();
-
-        	for(IPath p: completePaths) {
-                Collection<IArea> areas = new ArrayList<IArea>();
-            	try 
-            	{
-    				areas.addAll(grid.determineAreas(p));
-    				data.put(p, areas);
-    			} 
-            	catch (InvalidPathException e) 
-            	{
-    				System.out.println(e.getMessage());
-    			}          	
-            }  
-        	
-        	Repository.writeData(data);
-    }
-
     private static IGrid getExample() {
         IGridFactory gridFactory = new GridFactory();
 
@@ -64,6 +37,14 @@ public class Controller
         Collection<DecorationSpecification> decorationSpecifications = new ArrayList<DecorationSpecification>();
         DecorationSpecification blackSpot = new DecorationSpecification(new Position(2, 3), new Position(2, 4), new Mandatory());
         decorationSpecifications.add(blackSpot);
+        IFace greenStar1 = new StarFace(Colour.GREEN);
+        IFace greenStar2 = new StarFace(Colour.GREEN);
+        IFace greenStar3 = new StarFace(Colour.GREEN);
+        IFace greenStar4 = new StarFace(Colour.GREEN);
+        specialFaces.put(greenStar1, new Position(0, 1));
+        specialFaces.put(greenStar2, new Position(0, 2));
+        specialFaces.put(greenStar3, new Position(3, 1));
+        specialFaces.put(greenStar4, new Position(3, 2));
 
         Collection<Position> startPositions = new ArrayList<Position>();
         startPositions.add(new Position(0, 0));
@@ -85,55 +66,93 @@ public class Controller
         return grid;
     }
 
-    private static void solvePuzzle(IGrid grid) {
-        List<SolverRunnable> solvers = retrieveData();
-        List<Thread> solverThreads = new ArrayList<Thread>();
-        for (SolverRunnable solver : solvers) {
-            solver.setGrid(grid);
-            Thread solverThread = new Thread(solver);
-            solverThreads.add(solverThread);
-            solverThread.run();
-        }
-        int threadCount = solverThreads.size();
-        int finishedCount = 0;
-        IPath solution = null;
-
-        while ((finishedCount < threadCount) && (solution == null)) {
-            finishedCount = 0;
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            for (int i = 0; i < solverThreads.size(); i++) {
-                if (!solverThreads.get(i).isAlive()) {
-                    if (solvers.get(i).getResult() != null) {
-                        solution = solvers.get(i).getResult();
-                        break;
-                    }
-                    finishedCount++;
+    private static IEdge startExample(IGrid grid) {
+        IVertex vertex = null;
+        IVertex[][] vertices = grid.getVertices();
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (StartOrExit.START == vertices[i][j].getStartOrExit()) {
+                    vertex = vertices[i][j];
+                    break;
                 }
             }
         }
 
-        if (solution != null) {
-            System.out.println("Solution found.");
-            System.out.println(solution);
-        } else {
-            System.out.println("Failed to find solution.");
+        for (IEdge edge : grid.getEdges()) {
+            if (vertex == edge.getSource()) {
+                return edge;
+            }
         }
+
+        return null;
+    }
+
+    private static boolean moveRight(IGameManager gameManager) {
+        boolean success = true;
+        try {
+            IEdge rightEdge = gameManager.rightEdge();
+            gameManager.traverseEdge(rightEdge);
+        } catch (InvalidEdgeException e) {
+            success = false;
+        }
+
+        return success;
+    }
+
+    private static boolean moveLeft(IGameManager gameManager) {
+        boolean success = true;
+        try {
+            IEdge leftEdge = gameManager.leftEdge();
+            gameManager.traverseEdge(leftEdge);
+        } catch (InvalidEdgeException e) {
+            success = false;
+        }
+
+        return success;
+    }
+
+    private static boolean moveUp(IGameManager gameManager) {
+        boolean success = true;
+        try {
+            IEdge upEdge = gameManager.upEdge();
+            gameManager.traverseEdge(upEdge);
+        } catch (InvalidEdgeException e) {
+            success = false;
+        }
+
+        return success;
+    }
+
+    private static boolean moveDown(IGameManager gameManager) {
+        boolean success = true;
+        try {
+            IEdge downEdge = gameManager.downEdge();
+            gameManager.traverseEdge(downEdge);
+        } catch (InvalidEdgeException e) {
+            success = false;
+        }
+
+        return success;
     }
 
 	public static void main(String[] args)
 	{
         // This class now requires considerable refactoring but is currently experimental.
         IGrid grid = getExample();
+        IGameManager gameManager = new GameManager(grid);
+        gameManager.start(startExample(grid));
+        while (moveRight(gameManager)) {
+        }
+        while (moveDown(gameManager)) {
+        }
+        try {
+            gameManager.checkSolution();
+        } catch (InvalidPathException ipex) {
+            System.out.println(ipex.getMessage());
+        }
 
         //IGridDrawer gridDrawer = new GridDrawer(grid);
         //gridDrawer.drawGrid();
-
-        //computeData(grid); // Comment out either this or solvePuzzle.
-        solvePuzzle(grid);
     }
 }
 

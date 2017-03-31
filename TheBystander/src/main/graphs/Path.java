@@ -2,6 +2,7 @@ package main.graphs;
 
 import main.enums.StartOrExit;
 import main.exceptions.InvalidPathException;
+import main.exceptions.InvalidVertexException;
 import main.graphs.interfaces.IEdge;
 import main.graphs.interfaces.IPath;
 import main.graphs.interfaces.IVertex;
@@ -29,22 +30,6 @@ public class Path implements IPath, Serializable
 	public Path(boolean isMasterPath)
     {
         this.isMasterPath = isMasterPath;
-    }
-
-    public Path(IPath subPath, boolean isMasterPath)
-    {
-    	this.isMasterPath = isMasterPath;
-
-        for(IEdge edge:subPath.getEdges())
-        {
-            edges.add(edge);
-        }
-
-        for(IVertex vertex: subPath.getVertices())
-        {
-            vertices.add(vertex);
-        }
-
     }
 
     public List<IEdge> getEdges() {
@@ -162,7 +147,15 @@ public class Path implements IPath, Serializable
     	result += getEdges().get(getEdges().size()-1).getTarget();
     	return result + "</Path>";
     }
-    
+
+    public IVertex currentVertex() throws InvalidVertexException {
+        if (getVertices().size() > 0) {
+            return getVertices().get(getVertices().size() - 1);
+        } else {
+            throw new InvalidVertexException("Empty path does not have a current vertex.");
+        }
+    }
+
 	protected void writeObject(java.io.ObjectOutputStream out) throws IOException
 	 {
 		 out.writeInt(vertices.size());

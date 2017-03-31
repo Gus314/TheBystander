@@ -2,7 +2,7 @@ package main.graphs.rules;
 
 import main.enums.Colour;
 import main.graphs.AreaHelpers;
-import main.graphs.faces.interfaces.ISquareFace;
+import main.graphs.faces.interfaces.IColouredFace;
 import main.graphs.faces.interfaces.IStarFace;
 import main.graphs.grids.IGrid;
 import main.graphs.interfaces.IArea;
@@ -27,16 +27,15 @@ public class StarsRule  implements IRule
         return result;
     }
 
-    private static int squaresOfColour(Collection<ISquareFace> squareFaces, Colour colour) {
+    private static int facesOfColour(Collection<IColouredFace> colouredFaces, Colour colour) {
         int result = 0;
-        for (ISquareFace squareFace : squareFaces) {
-            if (squareFace.getColour() == colour) {
+        for (IColouredFace colouredFace : colouredFaces) {
+            if (colouredFace.getColour() == colour) {
                 result++;
             }
         }
         return result;
     }
-
     /**
      * @param area The area to check the rule against.
      * @return The number of rule-failing faces in the area. The face passes if and only if for each colour
@@ -45,14 +44,14 @@ public class StarsRule  implements IRule
      * 2. There is exactly 1 star of that colour in the area and exactly one square of that colour.
      * 3. There are exactly 2 stars of that colour in the area and zero squares of that colour.
      */
-    private static int areaRuleFailures(IArea area) {
+    public int ruleFailures(IArea area, IPath path, IGrid grid) {
         int result = 0;
 
         Collection<IStarFace> starFaces = AreaHelpers.getStarFaces(area);
-        Collection<ISquareFace> squareFaces = AreaHelpers.getSquareFaces(area);
+        Collection<IColouredFace> squareFaces = AreaHelpers.getColouredFaces(area);
         for (Colour colour : Colour.values()) {
             int starCount = starsOfColour(starFaces, colour);
-            int squaresOfColour = squaresOfColour(squareFaces, colour);
+            int squaresOfColour = facesOfColour(squareFaces, colour);
 
             boolean pass = ((starCount == 1 && squaresOfColour == 1) ||
                     (starCount == 2 && squaresOfColour == 0) ||
@@ -60,16 +59,6 @@ public class StarsRule  implements IRule
             if (!pass) {
                 result += starCount;
             }
-        }
-
-        return result;
-    }
-
-    public int ruleFailures(Collection<IArea> areas, IPath path, IGrid grid) {
-        int result = 0;
-
-        for (IArea area : areas) {
-            result += areaRuleFailures(area);
         }
 
         return result;

@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
  * Created by Gus on 09/12/2016.
  */
 public class SquareFacesRuleTest {
-    private Collection<IArea> areas = new ArrayList<IArea>();
     private SquareFacesRule squareFacesRule = new SquareFacesRule(); // Object should have no state, it is only an object to allow implementing interfaces.
     private IArea area = mock(IArea.class);
     private Collection<IFace> squareFaces = new ArrayList<IFace>();
@@ -28,8 +27,6 @@ public class SquareFacesRuleTest {
     public void setUp() {
         when(area.getFaces()).thenReturn(squareFaces);
         squareFaces.clear();
-        areas.clear();
-        areas.add(area);
     }
 
     @Test
@@ -39,7 +36,7 @@ public class SquareFacesRuleTest {
         squareFaces.add(blackFace);
 
         int expected = 0;
-        int actual = squareFacesRule.ruleFailures(areas, null, null);
+        int actual = squareFacesRule.ruleFailures(area, null, null);
         assertEquals(expected, actual);
     }
 
@@ -54,7 +51,7 @@ public class SquareFacesRuleTest {
         squareFaces.add(blackFace2);
 
         int expected = 0;
-        int actual = squareFacesRule.ruleFailures(areas, null, null);
+        int actual = squareFacesRule.ruleFailures(area, null, null);
         assertEquals(expected, actual);
     }
 
@@ -69,7 +66,7 @@ public class SquareFacesRuleTest {
         squareFaces.add(whiteFace);
 
         int expected = 2;
-        int actual = squareFacesRule.ruleFailures(areas, null, null);
+        int actual = squareFacesRule.ruleFailures(area, null, null);
         assertEquals(expected, actual);
     }
 
@@ -88,14 +85,14 @@ public class SquareFacesRuleTest {
         squareFaces.add(blueFace);
 
         int expected = 3;
-        int actual = squareFacesRule.ruleFailures(areas, null, null);
+        int actual = squareFacesRule.ruleFailures(area, null, null);
         assertEquals(expected, actual);
     }
 
     @Test
     public void noFacesThenPass() {
         int expected = 0;
-        int actual = squareFacesRule.ruleFailures(areas, null, null);
+        int actual = squareFacesRule.ruleFailures(area, null, null);
         assertEquals(expected, actual);
     }
 
